@@ -1,9 +1,13 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "messaging.h"
-#include "lisitngs.h"
-#include "orders.h"
+#include <thread>
+#include <chrono>
+
+class order;
+class listing;
+class message;
+class data_management;
 
 class user{
     protected:
@@ -14,16 +18,18 @@ class user{
         std::string location;
         static int total_users;
         bool is_banned;
+        data_management* dbManager;
     public:
-        user();
-        virtual void menu();
-        //void updateProfile();
-        //bool resetPassword();
-        virtual void displayProfile() const;
-        void see_listings();
+        user(data_management* DB);
         std::string get_email();
         std::string get_password();
         bool get_is_banned();
+        virtual void displayProfile() const;
+        virtual void menu();
+        virtual void listing_menu(const int id);
+        //void updateProfile();
+        //bool resetPassword();
+        //message
         virtual ~user() = default;
 };
 
@@ -34,14 +40,14 @@ class buyer : public user{
         int buyerrating = 0;
         std::vector<listing*> favourites;
         std::vector<order*> orders;
-        //vector<listing*> search_history; implement this later
+        //vector<listing*> search_history;
         std::vector<message*> inbox;
     public:
         buyer();
-        void menu() override;
         void displayProfile() const override;
         void add_favourite();
         void place_order();
+        void menu() override;
 };
 
 //3.
@@ -52,12 +58,13 @@ class seller : public user{
         std::string dealership_name;//If they are a dealer, otherwise it will be set to ""
         float total_earnings = 0;
         int ad_count = 0;
-        std::vector<listing*> ads;
         std::vector<message*> inbox;
     public:
         seller();
-        void menu() override;
         void displayProfile() const override;
+        void add_listing();
+        void update_listing();
+        void menu() override;
 };
 
 //4.
@@ -70,17 +77,10 @@ class admin : public user{
         std::string department;
     public:
         admin();
-        void menu() override;
         void displayProfile() const override;
+        void review_listing();
+        void review_report();
+        void menu() override;
 };
 
-//5.
-class authorisation{
-    private:
-        static std::vector<user*> user_database;
-    public:
-    static user* sign_up();
-    static user* sign_in();
-    static bool verify_email(std::string email);
-    static user* verify_user(std::string email, std::string password);
-};  
+

@@ -1,19 +1,22 @@
 #include <iostream>
 #include "accounts.h"
+#include "data_management.h"
+#include "messaging.h"
+#include "lisitngs.h"
+#include "orders.h"
 
 int user::total_users = 0;
-int listing::total_listings = 0;
 int buyer_count = 0;//for assigning an id
 int seller_count = 0;//for assigning an id
 int admin_count = 0;//for assigning an id
-std::vector<user*> authorisation::user_database;
 
 //1. User methods:
 #pragma region user
-user::user(){ // sign up 
+user::user(data_management* DB){ // sign up 
+    dbManager = DB;
     std::cout << "Please enter your email: ";
     std::cin >> email;
-    while(!authorisation::verify_email(email)){
+    while(!dbManager->verify_email(email)){
         std::cout << "That email is already registered! Please enter a different email: ";
         std::cin >> email;
     }
@@ -30,23 +33,102 @@ user::user(){ // sign up
     total_users++;
     is_banned = false;
 }
+
 std::string user::get_email(){
     return email;
 }
+
 std::string user::get_password(){
     return password;
 }
-void user::menu(){
-    
+
+bool user::get_is_banned(){
+    return is_banned;
 }
+
 void user::displayProfile() const{
     std::cout << "User details:";
     std::cout << "\nEmail: " << email;
     std::cout << "\nPhone number: " << phone_number;
     std::cout << "\nLocation: " << location;
 }
-bool user::get_is_banned(){
-    return is_banned;
+
+void user::listing_menu(const int id){
+    int choice, choice2, lsn;
+    std::vector<listing*>& listing_database = dbManager->get_listing_db();
+
+    std::cout << "---------------------------- All listings ----------------------------\n";
+    for (size_t i = 0; i < listing_database.size(); i++){
+        std::cout << "Listing Number: " << i << "\n";
+        listing_database[i]->display_summary();
+    }
+
+    do
+    {
+        std::cout << "================================== Listings Menu ==================================\n";
+        std::cout << "1. Re-diplay All Listings \n2. View a listing's details \n3. Exit to Main Menu\n";
+        std::cout << "Enter the option number: ";
+        std::cin >> choice;
+        switch(choice){
+            case 1://outside a listing 
+                std::cout << "---------------------------- All listings ----------------------------\n";
+                for (size_t i = 0; i < listing_database.size(); i++){
+                    std::cout << "Listing Number: " << i << "\n";
+                    listing_database[i]->display_summary();
+                }
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                break;
+            case 2:{//in a listing:
+                std::cout << "Enter listing number: ";
+                std::cin >> lsn;
+                if(lsn < 0 || lsn > listing_database.size()) {
+                    std::cout << "Invalid input. listing number should be between 0 and " << listing_database.size() -1 << "\n";
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    break;
+                }
+                int choice3;
+                do{
+                    std::cout << "------------------ Lisitng " <<  lsn <<  " ------------------\n";
+                    std::cout << "1. Vehicle Details \n2. Seller Details \n3. Listing details \n4. Exit to listings Menu\n";
+                    std::cout << "Enter the option number: ";
+                    std::cin >> choice2;
+                    switch (choice2){
+                        case 1:
+                            listing_database[lsn]->display_vehicle_details();
+                            break;
+                        case 2:
+                            listing_database[lsn]->display_seller_details();
+                            std::cout << "Do you want to contact the seller? (Enter 1 for yes or 0 for no) : ";
+                            std::cin >> choice3;
+                            if(choice3){
+                                //call message create function
+                            }
+                            break;
+                        case 3:
+                            listing_database[lsn]->display_listing_details();
+                            break;
+                        case 4:
+                            break;
+                        default:
+                            std::cout << "Invalid input\n";
+                            break;
+                    }
+                }while(choice2 != 4);
+                break;
+                }
+            case 3:
+                std::cout << "Exiting to main menu...\n";
+                return;
+            default:
+                std::cout << "Invalid input\n";
+                break;
+        }
+    } while (choice != 3);
+}
+
+
+void user::menu(){
+    
 }
 #pragma endregion
 
@@ -63,6 +145,7 @@ void buyer::displayProfile() const{
     std::cout << "\nBuyer rating: " << buyerrating << std::endl;
 }
 
+
 void buyer::menu(){
 
 }
@@ -78,17 +161,18 @@ seller::seller() : seller_id(seller_count){
 }
 
 void seller::displayProfile() const{
+    std::vector<listing*>& listing_database = dbManager->get_listing_db();
+
     user::displayProfile();
     std::cout << "\nUser type: Seller";
     std::cout << "\nSeller ID: " << seller_id;
     std::cout << "\nSeller rating: " << seller_rating;
     if (dealership_name != "private seller") std::cout << "\nDealership name: " << dealership_name;
     else std::cout << "\nDealership name: ''";
-    for (int i = 0; i < ads.size(); i++){
-        std::cout << "\nListing ID: " << ads[i]->get_id();
-        std::cout << "\nListing Name: " << ads[i]->get_name() << std::endl;
+    for (int i = 0; i < listing_database.size(); i++){
+        std::cout << "\nListing ID: " << listing_database[i]->get_id();
+        std::cout << "\nListing Name: " << listing_database[i]->get_name() << std::endl;
     }
-    
 }
 #pragma endregion
 
@@ -117,84 +201,6 @@ void admin::displayProfile() const{
 #pragma endregion
 
 //5. Authorisation methods:
-#pragma region Authorisation
-user* authorisation::sign_up(){
-    int choice;
-    std::cout << "Enter 1 if you are a buyer, 2 if you are a seller, 3 if you are an admin. ";
-    std::cin >> choice;
-    user* new_user;
-    switch (choice){
-    case 1:
-        new_user = new buyer();
-        break;
-    case 2:
-        new_user = new seller();
-        break;
-    case 3:
-        new_user = new admin();
-        break;
-    default:
-        std::cout << "Invalid input\n";
-        return nullptr;
-    }
-    user_database.push_back(new_user);
-    std::cout << "Sign up successful!\n";
-    return new_user;
-}
-bool authorisation::verify_email(std::string email){
-    for (int i = 0; i < user_database.size(); i++) {
-        if (user_database[i]->get_email() == email) {
-            return false; 
-        }
-    }
-    return true;
-}
-user* authorisation::sign_in(){
-    int choice;
-    std::string email, password;
-    std::cout << "Enter your email: ";
-    std::cin >> email;
-    std::cout << "Enter your password: ";
-    std::cin >> password;
-    user* u1 = verify_user(email,password);
-    if(u1 == nullptr){
-        std::cout << "Sign in failed\n";
-        return nullptr;
-    }
-    else if(u1->get_is_banned()){
-        std::cout << "User is banned!\n";
-        return nullptr;
-    }
-    return u1;
-}
+#pragma region data_management
 
-user* authorisation::verify_user(std::string email, std::string password) {
-    for (int i = 0; i < user_database.size(); i++) {
-        if (user_database[i]->get_email() == email && user_database[i]->get_password() == password) {
-            return user_database[i]; 
-        }
-    }
-    return nullptr; 
-}
 #pragma endregion
-
-
-//6. 
-int listing::get_id(){
-    return listing_id;
-}
-std::string listing::get_name(){
-    return name;
-}
-
-
-int main(){
-    std::cout << "Signing up...\n";
-    user* ptr1 = authorisation::sign_up();
-    std::cout << "Signing in...\n";
-    user* ptr2 = authorisation::sign_in();
-    if (ptr2 == nullptr)std::cout << "null ptr\n";
-    
-    else ptr2->displayProfile();
-    return 0;
-}

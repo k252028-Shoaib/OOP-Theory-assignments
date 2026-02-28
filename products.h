@@ -26,6 +26,9 @@ class vehicle{
         float fuel_tank_capacity;// in litres
         std::string trasmission_type;
         bool used;//true if used, false if new
+    public:
+        void calculate_resale_value();
+        void calculate_insurance();
 };
 
 //8.
