@@ -29,6 +29,7 @@ class vehicle{
     public:
         void calculate_resale_value();
         void calculate_insurance();
+        
 };
 
 //8.
@@ -39,8 +40,9 @@ class car : public vehicle{
         double ground_clearance;
         std::string drive_train;
         int no_of_doors;
-        std::vector<std::string> features;
+        std::vector<std::string> car_features;
     public:
+        //static add_car_features
 };
 
 //9. 
@@ -50,8 +52,9 @@ class bike : public vehicle{
         double seat_height;
         std::string drive_type;//4 stroke, 2 stroke etc.
         std::string cooling_system;//air cooled, water cooled etc.
-        std::vector<std::string> features;
+        std::vector<std::string> bike_features;
     public:
+        //static add_bike_features
 };
 
 //10.

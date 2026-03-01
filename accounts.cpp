@@ -6,14 +6,14 @@
 #include "orders.h"
 
 int user::total_users = 0;
-int buyer_count = 0;//for assigning an id
-int seller_count = 0;//for assigning an id
-int admin_count = 0;//for assigning an id
+int buyer::buyer_count = 0;//for assigning an id
+int seller::seller_count = 0;//for assigning an id
+int admin::admin_count = 0;//for assigning an id
+data_management* user::dbManager = nullptr;
 
 //1. User methods:
 #pragma region user
-user::user(data_management* DB){ // sign up 
-    dbManager = DB;
+user::user():user_id(total_users){ // sign up 
     std::cout << "Please enter your email: ";
     std::cin >> email;
     while(!dbManager->verify_email(email)){
@@ -32,6 +32,10 @@ user::user(data_management* DB){ // sign up
     std::getline(std::cin, location);
     total_users++;
     is_banned = false;
+}
+
+int user::get_id(){
+    return user_id;
 }
 
 std::string user::get_email(){
@@ -53,7 +57,7 @@ void user::displayProfile() const{
     std::cout << "\nLocation: " << location;
 }
 
-void user::listing_menu(const int id){
+void user::listing_menu(){
     int choice, choice2, lsn;
     std::vector<listing*>& listing_database = dbManager->get_listing_db();
 
@@ -72,7 +76,7 @@ void user::listing_menu(const int id){
         switch(choice){
             case 1://outside a listing 
                 std::cout << "---------------------------- All listings ----------------------------\n";
-                for (size_t i = 0; i < listing_database.size(); i++){
+                for (size_t i = 0; i < listing_database.size() - 1; i++){
                     std::cout << "Listing Number: " << i << "\n";
                     listing_database[i]->display_summary();
                 }
@@ -89,31 +93,41 @@ void user::listing_menu(const int id){
                 int choice3;
                 do{
                     std::cout << "------------------ Lisitng " <<  lsn <<  " ------------------\n";
-                    std::cout << "1. Vehicle Details \n2. Seller Details \n3. Listing details \n4. Exit to listings Menu\n";
+                    std::cout << "1. Vehicle Details \n2. Seller Details \n3. Listing details \n4. ";
+
+                    std::cout << get_special_action_name() << "\n5. Exit to listings Menu\n";
                     std::cout << "Enter the option number: ";
                     std::cin >> choice2;
                     switch (choice2){
                         case 1:
                             listing_database[lsn]->display_vehicle_details();
                             break;
-                        case 2:
-                            listing_database[lsn]->display_seller_details();
+                        case 2:{
+                            int seller_id = listing_database[lsn]->display_seller_details();
                             std::cout << "Do you want to contact the seller? (Enter 1 for yes or 0 for no) : ";
                             std::cin >> choice3;
                             if(choice3){
-                                //call message create function
+                                bool flag = dbManager->create_message(this, user_id, seller_id);
+                                if(!flag){
+                                    std::cout << "Failed to send message\n";
+                                }
+                                else std::cout << "Message sent successfully\n";
                             }
                             break;
+                        }
                         case 3:
                             listing_database[lsn]->display_listing_details();
                             break;
                         case 4:
+                            perform_special_action(listing_database[lsn]);
+                            break;
+                        case 5:
                             break;
                         default:
                             std::cout << "Invalid input\n";
                             break;
                     }
-                }while(choice2 != 4);
+                }while(choice2 != 5);
                 break;
                 }
             case 3:
@@ -145,6 +159,13 @@ void buyer::displayProfile() const{
     std::cout << "\nBuyer rating: " << buyerrating << std::endl;
 }
 
+std::string buyer::get_special_action_name() const{
+    return "Add to Favourites";
+}
+
+void buyer::perform_special_action(listing *l){
+    favourites.push_back(l);
+}
 
 void buyer::menu(){
 
@@ -174,6 +195,14 @@ void seller::displayProfile() const{
         std::cout << "\nListing Name: " << listing_database[i]->get_name() << std::endl;
     }
 }
+
+std::string seller::get_special_action_name() const{
+    return "Edit listing";
+}
+
+void seller::perform_special_action(listing *l){
+    //edit listing after checking the owner
+}
 #pragma endregion
 
 
@@ -197,6 +226,14 @@ void admin::displayProfile() const{
     std::cout << "\nAdmin level: " << admin_level;
     std::cout << "\nReports resolved: " << reports_resolved;
     std::cout << "\nDepartment: " << department << std::endl;
+}
+
+std::string admin::get_special_action_name() const{
+    return "Delete listing";
+}
+
+void admin::perform_special_action(listing *l){
+    //delete listing
 }
 #pragma endregion
 

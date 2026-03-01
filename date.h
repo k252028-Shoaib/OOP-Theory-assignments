@@ -14,5 +14,6 @@ class date{ //date class test
         void display_date();
         void update_date();//updates the date to today
         void change_date(int s,int m,int h,int d,int mon,int y);
-        time_t get_time_elapsed(time_t t);
+        static time_t get_time_elapsed(time_t t);
+        time_t get_time_t() const;
 };

@@ -18,15 +18,22 @@ class user{
         std::string location;
         static int total_users;
         bool is_banned;
-        data_management* dbManager;
+        static data_management* dbManager;
+        const int user_id;
+        std::vector<std::vector<message*>> inbox;//2d array of conversations, each element points to a 1d array of messages (a conversation)
+        
     public:
-        user(data_management* DB);
+        user();
+        int get_id();
         std::string get_email();
         std::string get_password();
         bool get_is_banned();
         virtual void displayProfile() const;
         virtual void menu();
-        virtual void listing_menu(const int id);
+        void listing_menu();
+        void add_message_to_inbox(message* m);
+        virtual std::string get_special_action_name() const = 0;
+        virtual void perform_special_action(listing *l) = 0;
         //void updateProfile();
         //bool resetPassword();
         //message
@@ -37,16 +44,18 @@ class user{
 class buyer : public user{
     private:
         const int buyer_id;
+        static int buyer_count;
         int buyerrating = 0;
         std::vector<listing*> favourites;
         std::vector<order*> orders;
-        //vector<listing*> search_history;
-        std::vector<message*> inbox;
+        //std::vector<listing*> search_history;
     public:
         buyer();
         void displayProfile() const override;
-        void add_favourite();
         void place_order();
+        std::string get_special_action_name() const override;
+        void perform_special_action(listing *l) override;
+        //view favourites list
         void menu() override;
 };
 
@@ -56,14 +65,17 @@ class seller : public user{
         const int seller_id;
         int seller_rating = 0;
         std::string dealership_name;//If they are a dealer, otherwise it will be set to ""
-        float total_earnings = 0;
+        std::vector<listing*> ads;
         int ad_count = 0;
-        std::vector<message*> inbox;
+        static int seller_count;
     public:
         seller();
         void displayProfile() const override;
         void add_listing();
-        void update_listing();
+        void edit_listing();
+        std::string get_special_action_name() const override;
+        void perform_special_action(listing *l) override;
+        //view ads list
         void menu() override;
 };
 
@@ -73,13 +85,15 @@ class admin : public user{
         int admin_level;//level 1 is to add or remove features and listings, level 2 is to ban ppl and see reports and take action
         const int admin_id;
         int reports_resolved = 0;
-        std::vector<message*> inbox;
+        static int admin_count;
         std::string department;
     public:
         admin();
         void displayProfile() const override;
         void review_listing();
         void review_report();
+        std::string get_special_action_name() const override;
+        void perform_special_action(listing *l) override;
         void menu() override;
 };
 

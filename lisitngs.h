@@ -15,9 +15,9 @@ class listing{
         int get_id();
         std::string get_name();
         void display_summary();
-        void display_seller_details();
+        int display_seller_details();//return seller id
         void display_vehicle_details();
         void display_listing_details();
-        void update_listing();
+        void edit_listing();
 };
 int listing::total_listings = 0;

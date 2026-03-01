@@ -2,21 +2,24 @@
 #include "date.h"
 class message{
     private:
-        const int message_id;
         std::string message_content;
-        int sender_id;
-        int reciever_id;
+        const int sender_id;
+        const int reciever_id;
         date date_sent;
-        bool is_read;
+        date edit_date;
     public:
-
+        message(const int sender_id, const int reciever_id);
+        void input_message();
+        void edit_message();
+        void display_message();
+        void display_time_elapsed();
 };
 
-class report{
-    private:
-        message report_description;
-        bool resolved;
-        void* id;//to report a listing, seller, or buyer
-    public:
+// class report{
+//     private:
+//         message report_description;
+//         bool resolved;
+//         void* id;//to report a listing, seller, or buyer
+//     public:
 
-};
+// };

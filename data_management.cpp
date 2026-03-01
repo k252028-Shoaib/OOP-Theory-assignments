@@ -1,15 +1,18 @@
 #include <iostream>
 #include "data_management.h"
 #include "accounts.h"
+#include "messaging.h"
+#include <fstream>
+
+
 
 std::vector<listing*>& data_management::get_listing_db(){
     return listing_database;
 }
 
-std::vector<message*>& data_management::get_message_db(){
+std::vector<message*>& data_management::get_message_db(const int id1, const int id2){
     return message_database;
 }
-
 
 user* data_management::sign_up(){
     int choice;
@@ -34,6 +37,7 @@ user* data_management::sign_up(){
     std::cout << "Sign up successful!\n";
     return new_user;
 }
+
 bool data_management::verify_email(std::string email){
     for (int i = 0; i < user_database.size(); i++) {
         if (user_database[i]->get_email() == email) {
@@ -42,6 +46,7 @@ bool data_management::verify_email(std::string email){
     }
     return true;
 }
+
 user* data_management::sign_in(){
     int choice;
     std::string email, password;
@@ -68,4 +73,26 @@ user* data_management::verify_user(std::string email, std::string password) {
         }
     }
     return nullptr; 
+}
+
+user* data_management::find_user_by_id(const int id){
+    for (size_t i = 0; i < user_database.size(); i++){
+        if(user_database[i]->get_id() == id){
+            return user_database[i];
+        }
+    }
+    return nullptr;
+}
+
+bool data_management::create_message(user* sender, const int sender_id, const int reciever_id){
+    user* reciever = find_user_by_id(reciever_id);
+    if(reciever == nullptr){
+        std::cout << "No user found with id: " << reciever_id << "\n";
+        return false;
+    }
+    message* new_message = new message(sender_id,reciever_id);
+    sender->add_message_to_inbox(new_message);
+    reciever->add_message_to_inbox(new_message);
+    message_database.push_back(new_message);
+    return true;
 }
