@@ -7,13 +7,19 @@ class message{
         const int reciever_id;
         date date_sent;
         date edit_date;
+        bool edited;
+        bool is_read;
     public:
         message(const int sender_id, const int reciever_id);
         void input_message();
         void edit_message();
         void display_message();
         void display_time_elapsed();
+        int get_sender_id();
+        int get_reciever_id();
 };
+
+//create conversation class
 
 // class report{
 //     private:

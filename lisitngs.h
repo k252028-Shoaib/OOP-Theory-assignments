@@ -2,16 +2,20 @@
 #include "accounts.h"
 #include "date.h"
 
+class vehicle;
 class listing{
     private:
         const int listing_id;
         std::string name;
         seller* Seller;
-        void* item;
+        vehicle* Veehicle;
         date publish_date;
+        date edit_date;
+        bool edited;
         std::string description;
         static int total_listings;
     public:
+        listing(seller* s);
         int get_id();
         std::string get_name();
         void display_summary();

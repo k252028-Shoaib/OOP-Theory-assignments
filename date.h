@@ -1,6 +1,6 @@
 #pragma once
 #include <ctime>
-class date{ //date class test
+class date{ 
     private:
         int second;
         int minute;

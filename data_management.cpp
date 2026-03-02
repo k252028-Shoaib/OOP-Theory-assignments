@@ -2,9 +2,10 @@
 #include "data_management.h"
 #include "accounts.h"
 #include "messaging.h"
+#include "lisitngs.h"
 #include <fstream>
 
-
+data_management::data_management(){}
 
 std::vector<listing*>& data_management::get_listing_db(){
     return listing_database;
@@ -63,6 +64,8 @@ user* data_management::sign_in(){
         std::cout << "User is banned!\n";
         return nullptr;
     }
+    std::cout << "Successfully signed in!\n";
+    //u1->display_unread_messages();
     return u1;
 }
 
@@ -91,8 +94,13 @@ bool data_management::create_message(user* sender, const int sender_id, const in
         return false;
     }
     message* new_message = new message(sender_id,reciever_id);
-    sender->add_message_to_inbox(new_message);
-    reciever->add_message_to_inbox(new_message);
+    sender->add_message_to_inbox(new_message, reciever_id);
+    reciever->add_message_to_inbox(new_message, sender_id);
     message_database.push_back(new_message);
     return true;
+}
+
+bool data_management::create_listing(seller* s){
+    listing* l = new listing(s);
+
 }

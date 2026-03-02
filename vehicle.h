@@ -11,9 +11,8 @@ typedef struct Engine{
 
 //7.
 class vehicle{
-    private:
+    protected:
         Engine engine;
-        std::string body_type;
         std::string colour;
         float price;// in pkr
         std::string company;
@@ -27,9 +26,15 @@ class vehicle{
         std::string trasmission_type;
         bool used;//true if used, false if new
     public:
+        vehicle();
         void calculate_resale_value();
-        void calculate_insurance();
-        
+        void calculate_finance();
+        virtual void display_all_details();
+        virtual bool edit_details();
+        std::string get_company();
+        std::string get_model_name();
+        std::string get_model_year();
+        float get_price();
 };
 
 //8.
@@ -40,9 +45,13 @@ class car : public vehicle{
         double ground_clearance;
         std::string drive_train;
         int no_of_doors;
-        std::vector<std::string> car_features;
+        static std::vector<std::string> car_features;
     public:
-        //static add_car_features
+        car();
+        void display_all_details() override;
+        bool edit_details() override;
+        static void add_car_features();
+        void calculate_road_tax();
 };
 
 //9. 
@@ -52,14 +61,14 @@ class bike : public vehicle{
         double seat_height;
         std::string drive_type;//4 stroke, 2 stroke etc.
         std::string cooling_system;//air cooled, water cooled etc.
-        std::vector<std::string> bike_features;
+        static std::vector<std::string> bike_features;
     public:
-        //static add_bike_features
+        bike();
+        void display_all_details() override;
+        bool edit_details() override;
+        static void add_bike_features();
+        void check_safety_gear_requirement();
 };
 
-//10.
-typedef struct accesory{
-    std::string company;
-    float price;
-    std::string category;
-}accesory;
+std::vector<std::string> car::car_features;
+std::vector<std::string> bike::bike_features;

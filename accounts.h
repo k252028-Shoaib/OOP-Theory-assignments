@@ -24,19 +24,23 @@ class user{
         
     public:
         user();
+        std::string get_full_name();
         int get_id();
         std::string get_email();
         std::string get_password();
         bool get_is_banned();
         virtual void displayProfile() const;
-        virtual void menu();
+        virtual void Menu();
         void listing_menu();
-        void add_message_to_inbox(message* m);
+        void add_message_to_inbox(message* m, int user2_id);
+        //void display_unread_messages();
         virtual std::string get_special_action_name() const = 0;
         virtual void perform_special_action(listing *l) = 0;
         //void updateProfile();
         //bool resetPassword();
-        //message
+        //create conversation
+        //reply
+        //find conversation
         virtual ~user() = default;
 };
 
@@ -56,7 +60,7 @@ class buyer : public user{
         std::string get_special_action_name() const override;
         void perform_special_action(listing *l) override;
         //view favourites list
-        void menu() override;
+        void Menu() override;
 };
 
 //3.
@@ -70,13 +74,16 @@ class seller : public user{
         static int seller_count;
     public:
         seller();
+        int get_seller_id();
+        int get_seller_rating();
+        std::string get_dealership_name();
         void displayProfile() const override;
         void add_listing();
         void edit_listing();
         std::string get_special_action_name() const override;
         void perform_special_action(listing *l) override;
         //view ads list
-        void menu() override;
+        void Menu() override;
 };
 
 //4.
@@ -94,7 +101,7 @@ class admin : public user{
         void review_report();
         std::string get_special_action_name() const override;
         void perform_special_action(listing *l) override;
-        void menu() override;
+        void Menu() override;
 };
 
 

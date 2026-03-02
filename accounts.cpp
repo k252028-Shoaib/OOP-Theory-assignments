@@ -14,6 +14,7 @@ data_management* user::dbManager = nullptr;
 //1. User methods:
 #pragma region user
 user::user():user_id(total_users){ // sign up 
+    std::cout << "--------------------- User Details ---------------------\n";
     std::cout << "Please enter your email: ";
     std::cin >> email;
     while(!dbManager->verify_email(email)){
@@ -32,6 +33,10 @@ user::user():user_id(total_users){ // sign up
     std::getline(std::cin, location);
     total_users++;
     is_banned = false;
+}
+
+std::string user::get_full_name(){
+    return full_name;
 }
 
 int user::get_id(){
@@ -55,6 +60,8 @@ void user::displayProfile() const{
     std::cout << "\nEmail: " << email;
     std::cout << "\nPhone number: " << phone_number;
     std::cout << "\nLocation: " << location;
+    if(is_banned) std::cout << "\nIs Banned: Yes";
+    else std::cout << "\nIs Banned: No";
 }
 
 void user::listing_menu(){
@@ -131,7 +138,7 @@ void user::listing_menu(){
                 break;
                 }
             case 3:
-                std::cout << "Exiting to main menu...\n";
+                std::cout << "Exiting to main Menu...\n";
                 return;
             default:
                 std::cout << "Invalid input\n";
@@ -140,8 +147,19 @@ void user::listing_menu(){
     } while (choice != 3);
 }
 
+void user::add_message_to_inbox(message* m, int user2_id){
+    //checking if the conversation exists with the user being the reciever or the sender
+    for(int i = 0; i < inbox.size(); i++){
+        if(inbox[i][0]->get_sender_id() == user2_id || inbox[i][0]->get_reciever_id() == user2_id){//involves the other person
+            inbox[i].push_back(m);
+            return;
+        }
+    }
+    //else create a new column/conversation
+    inbox.push_back({m});
+}
 
-void user::menu(){
+void user::Menu(){
     
 }
 #pragma endregion
@@ -167,7 +185,7 @@ void buyer::perform_special_action(listing *l){
     favourites.push_back(l);
 }
 
-void buyer::menu(){
+void buyer::Menu(){
 
 }
 #pragma endregion
@@ -181,6 +199,19 @@ seller::seller() : seller_id(seller_count){
     std::getline(std::cin, dealership_name);
 }
 
+int seller::get_seller_id(){
+    return seller_id;
+}
+
+int seller::get_seller_rating(){
+    return seller_rating;
+}
+
+std::string seller::get_dealership_name(){
+    return dealership_name;
+}
+
+
 void seller::displayProfile() const{
     std::vector<listing*>& listing_database = dbManager->get_listing_db();
 
@@ -189,10 +220,9 @@ void seller::displayProfile() const{
     std::cout << "\nSeller ID: " << seller_id;
     std::cout << "\nSeller rating: " << seller_rating;
     if (dealership_name != "private seller") std::cout << "\nDealership name: " << dealership_name;
-    else std::cout << "\nDealership name: ''";
+    else std::cout << "\nDealership name: ''\n";
     for (int i = 0; i < listing_database.size(); i++){
-        std::cout << "\nListing ID: " << listing_database[i]->get_id();
-        std::cout << "\nListing Name: " << listing_database[i]->get_name() << std::endl;
+        listing_database[i]->display_summary();
     }
 }
 
@@ -233,7 +263,7 @@ std::string admin::get_special_action_name() const{
 }
 
 void admin::perform_special_action(listing *l){
-    //delete listing
+    
 }
 #pragma endregion
 

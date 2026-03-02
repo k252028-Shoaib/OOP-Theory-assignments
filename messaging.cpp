@@ -1,9 +1,11 @@
 #include "messaging.h"
 #include <iostream>
 
-message::message(const int sender_id, const int reciever_id): sender_id(sender_id), reciever_id(reciever_id), edit_date(0,0,0,0,0,0)
-{
+message::message(const int sender_id, const int reciever_id): sender_id(sender_id), reciever_id(reciever_id), edit_date(0,0,0,0,0,0){
+    std::cout << "--------------------- Message Details ---------------------\n";
     input_message();
+    edited = false;
+    is_read = false;
 }
 
 void message::input_message(){
@@ -20,7 +22,7 @@ void message::input_message(){
 }   
 
 void message::edit_message(){
-    std::cout << "Please note the previous message will be deleted. If you wish to continue, enter 1, else enter 0: ";
+    std::cout << "Please note the previous message content will be deleted. If you wish to continue, enter 1, else enter 0: ";
     int choice;
     std::cin >> choice;
     if (choice){
@@ -40,11 +42,15 @@ void message::edit_message(){
 }
 
 void message::display_message(){
-    std::cout << "User " << sender_id << "\n";
+    std::cout << "User ID: " << sender_id << "\n";
     std::cout << "Recieved ";
     display_time_elapsed();
     std::cout << "ago" << "on: \n";
     date_sent.display_date();
+    if(!edited){
+        std::cout << "Edited on: ";
+        edit_date.display_date();
+    }
     std::cout << message_content << std::endl;
 }
 
@@ -67,4 +73,12 @@ void message::display_time_elapsed() {
     if (hours > 0) std::cout << hours << " hours, ";
     if (minutes > 0) std::cout << minutes << " minutes, ";
     std::cout << seconds << " seconds ago." << std::endl;
+}
+
+int message::get_sender_id(){
+    return sender_id;
+}
+
+int message::get_reciever_id(){
+    return reciever_id;
 }

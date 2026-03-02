@@ -13,6 +13,7 @@ class data_management{
         std::vector<listing*> listing_database;
         std::vector<message*> message_database;
     public:
+        data_management();
         data_management(const data_management&) = delete;
         data_management& operator=(data_management&&)  = delete; //ensuring there is no copy of the database
 
@@ -26,6 +27,8 @@ class data_management{
 
         user* find_user_by_id(const int id);
         bool create_message(user* sender, const int sender_id, const int reciever_id);
+        
+        bool create_listing(seller* s);
         /*
         delete message
 
