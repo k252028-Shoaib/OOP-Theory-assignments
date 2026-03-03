@@ -1,5 +1,6 @@
 #pragma once
 #include "date.h"
+#include <string>
 class message{
     private:
         std::string message_content;
@@ -11,6 +12,7 @@ class message{
         bool is_read;
     public:
         message(const int sender_id, const int reciever_id);
+        //make copy constructor
         void input_message();
         void edit_message();
         void display_message();

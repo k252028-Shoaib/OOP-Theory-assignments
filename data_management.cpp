@@ -4,6 +4,7 @@
 #include "messaging.h"
 #include "lisitngs.h"
 #include <fstream>
+#include <algorithm>
 
 data_management::data_management(){}
 
@@ -40,7 +41,7 @@ user* data_management::sign_up(){
 }
 
 bool data_management::verify_email(std::string email){
-    for (int i = 0; i < user_database.size(); i++) {
+    for (size_t i = 0; i < user_database.size(); i++) {
         if (user_database[i]->get_email() == email) {
             return false; 
         }
@@ -49,7 +50,6 @@ bool data_management::verify_email(std::string email){
 }
 
 user* data_management::sign_in(){
-    int choice;
     std::string email, password;
     std::cout << "Enter your email: ";
     std::cin >> email;
@@ -57,7 +57,6 @@ user* data_management::sign_in(){
     std::cin >> password;
     user* u1 = verify_user(email,password);
     if(u1 == nullptr){
-        std::cout << "Sign in failed\n";
         return nullptr;
     }
     else if(u1->get_is_banned()){
@@ -70,7 +69,7 @@ user* data_management::sign_in(){
 }
 
 user* data_management::verify_user(std::string email, std::string password) {
-    for (int i = 0; i < user_database.size(); i++) {
+    for (size_t i = 0; i < user_database.size(); i++) {
         if (user_database[i]->get_email() == email && user_database[i]->get_password() == password) {
             return user_database[i]; 
         }
@@ -100,7 +99,21 @@ bool data_management::create_message(user* sender, const int sender_id, const in
     return true;
 }
 
-bool data_management::create_listing(seller* s){
+listing* data_management::create_listing(seller* s){
     listing* l = new listing(s);
+    return l;
+}
 
+listing* data_management::find_listing_by_id(const int id){
+    for (size_t i = 0; i < listing_database.size(); i++){
+        if(listing_database[i]->get_id() == id){
+            return listing_database[i];
+        }
+    }
+    return nullptr;
+}
+
+void data_management::delete_listing(listing* l){
+    delete l;
+    std::erase(listing_database, l);
 }

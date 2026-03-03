@@ -5,6 +5,7 @@
 class user;
 class listing;
 class message;
+class seller;
 
 class data_management{
     private:
@@ -28,12 +29,11 @@ class data_management{
         user* find_user_by_id(const int id);
         bool create_message(user* sender, const int sender_id, const int reciever_id);
         
-        bool create_listing(seller* s);
+        listing* create_listing(seller* s);
+        listing* find_listing_by_id(const int id);
+        void delete_listing(listing* l);
         /*
         delete message
-
-        create listing
-        delete listing
 
         */
 };  

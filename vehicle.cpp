@@ -1,7 +1,6 @@
 #include "vehicle.h"
 #include <iostream>
 #include <math.h>
-
 //1. Vehicle methods
 vehicle::vehicle(){
     std::cout << "--------------------- Vehicle Details ---------------------\n";
@@ -58,6 +57,10 @@ std::string vehicle::get_model_year(){
 
 float vehicle::get_price(){
     return price;
+}
+
+int vehicle::get_mileage() { 
+    return mileage; 
 }
 
 void vehicle::display_all_details(){

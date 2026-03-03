@@ -9,7 +9,6 @@ typedef struct Engine{
     std::string fuel_type;
 }Engine;
 
-//7.
 class vehicle{
     protected:
         Engine engine;
@@ -30,14 +29,15 @@ class vehicle{
         void calculate_resale_value();
         void calculate_finance();
         virtual void display_all_details();
-        virtual bool edit_details();
+        virtual bool edit_details() = 0;
         std::string get_company();
         std::string get_model_name();
         std::string get_model_year();
         float get_price();
+        int get_mileage();
+        virtual ~vehicle() = default;
 };
 
-//8.
 class car : public vehicle{
     private:
         int no_of_seats;
@@ -54,7 +54,6 @@ class car : public vehicle{
         void calculate_road_tax();
 };
 
-//9. 
 class bike : public vehicle{
     private:
         int dry_weight;
@@ -70,5 +69,3 @@ class bike : public vehicle{
         void check_safety_gear_requirement();
 };
 
-std::vector<std::string> car::car_features;
-std::vector<std::string> bike::bike_features;

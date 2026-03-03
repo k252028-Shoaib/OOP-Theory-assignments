@@ -4,7 +4,6 @@
 #include <thread>
 #include <chrono>
 
-class order;
 class listing;
 class message;
 class data_management;
@@ -18,29 +17,30 @@ class user{
         std::string location;
         static int total_users;
         bool is_banned;
-        static data_management* dbManager;
         const int user_id;
         std::vector<std::vector<message*>> inbox;//2d array of conversations, each element points to a 1d array of messages (a conversation)
         
     public:
         user();
+        static bool db_set;
+        static data_management* dbManager;
+        static void set_database(data_management *db);
         std::string get_full_name();
         int get_id();
         std::string get_email();
         std::string get_password();
         bool get_is_banned();
+        void set_ban(bool b);
         virtual void displayProfile() const;
-        virtual void Menu();
+        void filter_listings();
         void listing_menu();
         void add_message_to_inbox(message* m, int user2_id);
         //void display_unread_messages();
+        void send_message(user* active_user,int sender_id, int reciver_id);
         virtual std::string get_special_action_name() const = 0;
         virtual void perform_special_action(listing *l) = 0;
-        //void updateProfile();
-        //bool resetPassword();
-        //create conversation
-        //reply
-        //find conversation
+        virtual void buyer_special_action(listing *l) = 0;
+        virtual void Menu() = 0;
         virtual ~user() = default;
 };
 
@@ -51,15 +51,16 @@ class buyer : public user{
         static int buyer_count;
         int buyerrating = 0;
         std::vector<listing*> favourites;
-        std::vector<order*> orders;
-        //std::vector<listing*> search_history;
+        std::vector<listing*> search_history;
     public:
         buyer();
         void displayProfile() const override;
-        void place_order();
+        //void place_order();
         std::string get_special_action_name() const override;
-        void perform_special_action(listing *l) override;
-        //view favourites list
+        void perform_special_action(listing *l) override;//add to favoutites
+        void buyer_special_action(listing *l) override;
+        void display_favourites();
+        void display_search_history();
         void Menu() override;
 };
 
@@ -78,18 +79,19 @@ class seller : public user{
         int get_seller_rating();
         std::string get_dealership_name();
         void displayProfile() const override;
-        void add_listing();
         void edit_listing();
         std::string get_special_action_name() const override;
         void perform_special_action(listing *l) override;
-        //view ads list
+        void buyer_special_action(listing *l) override;
+        void view_my_ads();
+        listing* find_listing_by_id(const int id);
         void Menu() override;
 };
 
 //4.
 class admin : public user{
     private:
-        int admin_level;//level 1 is to add or remove features and listings, level 2 is to ban ppl and see reports and take action
+        int admin_level;//level 1 is to add or remove cars and bikes features, level 2 is to ban ppl and remove listings
         const int admin_id;
         int reports_resolved = 0;
         static int admin_count;
@@ -97,10 +99,10 @@ class admin : public user{
     public:
         admin();
         void displayProfile() const override;
-        void review_listing();
-        void review_report();
         std::string get_special_action_name() const override;
         void perform_special_action(listing *l) override;
+        void buyer_special_action(listing *l) override;
+        void manage_pending_listings();
         void Menu() override;
 };
 
