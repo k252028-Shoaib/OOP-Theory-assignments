@@ -475,10 +475,23 @@ void seller::Menu(){
 admin::admin() : admin_id(admin_count){
     admin_count++;
     std::cout << "Enter 1 if you are a level 1 admin and enter 2 if you are a level 2 admin: ";
-    std::cin >> admin_level;
-    while(admin_level != 1 && admin_level != 2){
-        std::cout << "Invalid input. Enter 1 if you are a level 1 admin and enter 2 if you are a level 2 admin: ";
-        std::cin >> admin_level;
+    
+    while (true) {
+        if (std::cin >> admin_level) {
+            if (admin_level == 1 || admin_level == 2) {
+                break; // Valid input, exit the loop
+            } 
+            else {
+                std::cout << "Invalid input. Enter 1 if you are a level 1 admin and enter 2 if you are a level 2 admin: ";
+            }
+        }
+        else {
+            std::cout << "Invalid input type. Please enter a number (1 or 2): ";
+            
+            std::cin.clear(); 
+            
+            std::cin.ignore(1000, '\n'); 
+        }
     }
 }
 
@@ -509,11 +522,9 @@ void admin::buyer_special_action(listing *l){/*do nothing*/}
 void admin::manage_pending_listings(){
     std::vector<listing*>& listing_database = dbManager->get_listing_db();
     
-    std::cout << "\n--- Pending Approvals ---\n";
+    std::cout << "\n------------------ Pending Approvals ------------------\n";
     for (size_t i = 0; i < listing_database.size(); i++) {
-        std::cout << "loop working\n";///start here
         if (!listing_database[i]->get_is_approved()) {
-            std::cout << "Listing ID: " << listing_database[i]->get_id() << "\n";
             listing_database[i]->display_summary();
             
             int action;

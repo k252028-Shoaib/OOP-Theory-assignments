@@ -4,6 +4,7 @@
 message::message(const int sender_id, const int reciever_id): sender_id(sender_id), reciever_id(reciever_id), edit_date(0,0,0,0,0,0){
     std::cout << "--------------------- Message Details ---------------------\n";
     message_content = "";
+    std::cin.ignore(1000,'\n');
     input_message();
     edited = false;
     is_read = false;

@@ -101,6 +101,7 @@ bool data_management::create_message(user* sender, const int sender_id, const in
 
 listing* data_management::create_listing(seller* s){
     listing* l = new listing(s);
+    listing_database.push_back(l);
     return l;
 }
 
