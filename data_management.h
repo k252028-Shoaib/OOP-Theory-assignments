@@ -9,7 +9,7 @@ class seller;
 
 class data_management{
     private:
-        const std::string filename;
+        const std::string filename;//will implement file i/o soon
         std::vector<user*> user_database;
         std::vector<listing*> listing_database;
         std::vector<message*> message_database;
@@ -32,8 +32,4 @@ class data_management{
         listing* create_listing(seller* s);
         listing* find_listing_by_id(const int id);
         void delete_listing(listing* l);
-        /*
-        delete message
-
-        */
 };  

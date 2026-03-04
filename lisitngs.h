@@ -7,8 +7,8 @@ class listing{
     private:
         const int listing_id;
         std::string name;
-        seller* Seller;
-        vehicle* Veehicle;
+        seller* const Seller;
+        vehicle* const Veehicle;
         date publish_date;
         date edit_date;
         bool edited;
@@ -16,7 +16,7 @@ class listing{
         std::string description;
         static int total_listings;
     public:
-        listing(seller* s);
+        listing(seller* s, vehicle *v);
         int get_listing_id();
         std::string get_name();
         vehicle* get_vehicle();

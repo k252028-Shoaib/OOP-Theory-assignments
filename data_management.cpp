@@ -3,6 +3,7 @@
 #include "accounts.h"
 #include "messaging.h"
 #include "lisitngs.h"
+#include "vehicle.h"
 #include <fstream>
 #include <algorithm>
 
@@ -104,7 +105,17 @@ bool data_management::create_message(user* sender, const int sender_id, const in
 }
 
 listing* data_management::create_listing(seller* s){
-    listing* l = new listing(s);
+    int choice;
+    vehicle* v;
+    std::cout << "Do you want to add a car or a bike, enter 1 for car and 2 for bike: ";
+    std::cin >> choice;
+    while(choice != 1 && choice != 2){
+        std::cout << "Invalid input. Enter 1 for car and 2 for bike: ";
+        std::cin >> choice;
+    }
+    if (choice == 1) v = new car();
+    else v = new bike();
+    listing* l = new listing(s,v);
     listing_database.push_back(l);
     return l;
 }

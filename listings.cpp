@@ -2,17 +2,7 @@
 #include <iostream>
 #include "vehicle.h"
 
-listing::listing(seller* s) : listing_id(total_listings), edit_date(0,0,0,0,0,0){
-    Seller = s;
-    int choice;
-    std::cout << "Do you want to add a car or a bike, enter 1 for car and 2 for bike: ";
-    std::cin >> choice;
-    while(choice != 1 && choice != 2){
-        std::cout << "Invalid input. Enter 1 for car and 2 for bike: ";
-        std::cin >> choice;
-    }
-    if (choice == 1) Veehicle = new car();
-    else Veehicle = new bike();
+listing::listing(seller* s, vehicle *v) : listing_id(total_listings), edit_date(0,0,0,0,0,0), Seller(s), Veehicle(v){
     std::cout << "--------------------- Listing Details ---------------------\n";
     total_listings++;
     std::cout << "Please enter listing name: ";
