@@ -38,7 +38,7 @@ void listing::set_is_approved(bool b){
     is_approved = b;
 }
 
-int listing::get_id(){
+int listing::get_listing_id(){
     return listing_id;
 }
 

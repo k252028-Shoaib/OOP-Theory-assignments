@@ -17,7 +17,7 @@ class listing{
         static int total_listings;
     public:
         listing(seller* s);
-        int get_id();
+        int get_listing_id();
         std::string get_name();
         vehicle* get_vehicle();
         bool get_is_approved();

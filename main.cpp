@@ -18,7 +18,7 @@ std::vector<std::string> bike::bike_features;
 
 int main(){
     data_management database;
-    user* active_user;
+    user* active_user = nullptr;
     user::set_database(&database);
     int choice;
     do
@@ -31,6 +31,10 @@ int main(){
         }
         else if(choice == 2){
             active_user = user::dbManager->sign_in();
+        }
+        else if (choice == 3){
+            std::cout << "Exiting...";
+            return 0;
         }
         else if(choice !=3){
             std::cout << "Invalid input.\n";

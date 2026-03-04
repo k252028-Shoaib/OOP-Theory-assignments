@@ -3,14 +3,14 @@
 
 date::date(){
     time_t now = time(0); // get current time
-    tm* time = localtime(&now); //converts to the correct structure
+    tm* t = localtime(&now); //converts to the correct structure
     
-    second = time->tm_sec;
-    minute = time->tm_min;
-    hour = time->tm_hour;
-    day = time->tm_mday;
-    month = time->tm_mon + 1;
-    year = time->tm_year + 1900;
+    second = t->tm_sec;
+    minute = t->tm_min;
+    hour = t->tm_hour;
+    day = t->tm_mday;
+    month = t->tm_mon + 1;
+    year = t->tm_year + 1900;
 }
 date::date(int s,int m,int h,int d,int mon,int y){
     second = s;
@@ -26,14 +26,14 @@ void date::display_date(){
 }
 void date::update_date(){
     time_t now = time(0); 
-    tm* time = localtime(&now);
+    tm* t = localtime(&now);
     
-    second = time->tm_sec;
-    minute = time->tm_min;
-    hour = time->tm_hour;
-    day = time->tm_mday;
-    month = time->tm_mon + 1;
-    year = time->tm_year + 1900;
+    second = t->tm_sec;
+    minute = t->tm_min;
+    hour = t->tm_hour;
+    day = t->tm_mday;
+    month = t->tm_mon + 1;
+    year = t->tm_year + 1900;
 }
 void date::change_date(int s,int m,int h,int d,int mon,int y){
     second = s;

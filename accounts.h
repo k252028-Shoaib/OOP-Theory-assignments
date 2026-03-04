@@ -35,6 +35,7 @@ class user{
         void filter_listings();
         void listing_menu();
         void add_message_to_inbox(message* m, int user2_id);
+        void view_inbox();
         //void display_unread_messages();
         void send_message(user* active_user,int sender_id, int reciver_id);
         virtual std::string get_special_action_name() const = 0;

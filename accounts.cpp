@@ -30,7 +30,10 @@ user::user():user_id(total_users){ // sign up
 }
 
 void user::set_database(data_management *db){
-    if (!db_set) dbManager = db;
+    if (!db_set) {
+        dbManager = db;
+        db_set =true;
+    }
     else std::cout << "Database is already set!" << std::endl;
 }
 
@@ -237,10 +240,40 @@ void user::send_message(user* active_user,int sender_id, int reciver_id){
     else std::cout << "Message sent successfully\n";
 }
 
+void user::view_inbox() {
+    if (inbox.empty()) {
+        std::cout << "Your inbox is empty.\n";
+        return;
+    }
+
+    std::cout << "---------------------------- Inbox ----------------------------\n";
+    for (size_t i = 0; i < inbox.size(); i++) {
+        int other_id = (inbox[i][0]->get_sender_id() == user_id) ? inbox[i][0]->get_reciever_id() : inbox[i][0]->get_sender_id();
+        
+        user* other_user = dbManager->find_user_by_id(other_id); //
+        std::string name = (other_user != nullptr) ? other_user->get_full_name() : "Unknown User";
+
+        std::cout << i + 1 << ". Conversation with " << name << " (ID: " << other_id << ") [" << inbox[i].size() << " messages]\n";
+    }
+
+    int chat_choice;
+    std::cout << "Enter conversation number to view (or 0 to exit): ";
+    std::cin >> chat_choice;
+
+    if (chat_choice > 0 && chat_choice <= (int)inbox.size()) {
+        size_t idx = chat_choice - 1;//index
+        std::cout << "\n--- Full Conversation ---\n";
+        for (message* m : inbox[idx]) {//go through all messages
+            m->display_message(); 
+            std::cout << "--------------------------\n";
+        }
+    }
+}
+
 void user::add_message_to_inbox(message* m, int user2_id){
     //checking if the conversation exists with the user being the reciever or the sender
     for(size_t i = 0; i < inbox.size(); i++){
-        if(inbox[i][0]->get_sender_id() == user2_id || inbox[i][0]->get_reciever_id() == user2_id){//involves the other person
+        if(inbox[i][0]->get_sender_id() == user2_id || inbox[i][0]->get_reciever_id() == user2_id){//involves the other person or not
             inbox[i].push_back(m);
             return;
         }
@@ -300,7 +333,8 @@ void buyer::Menu(){
         std::cout << "3. Display profile\n";
         std::cout << "4. View favorites list\n";
         std::cout << "5. View search history\n";
-        std::cout << "6. Sign out\n";
+        std::cout << "6. View inbox\n";
+        std::cout << "7. Sign out\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         switch (choice){
@@ -323,13 +357,16 @@ void buyer::Menu(){
             display_search_history();
             break;
         case 6:
+            view_inbox();
+            break;
+        case 7:
             std::cout << "Signing out...\n";
             return;
         default:
             std::cout << "Invalid input\n\n";
             break;
         }
-    } while (choice != 6);
+    } while (choice != 7);
 }
 #pragma endregion
 
@@ -372,7 +409,11 @@ std::string seller::get_special_action_name() const{
 }
 
 void seller::perform_special_action(listing *l){
-    //edit listing after checking the owner
+    if (l->get_seller_id() == user_id) {
+        l->edit_listing(); //
+    } else {
+        std::cout << "Access Denied: You can only edit your own listings!\n";
+    }
 }
 
 void seller::buyer_special_action(listing *l){/*do nothing*/}
@@ -386,7 +427,7 @@ void seller::view_my_ads(){
 
 listing* seller::find_listing_by_id(const int id){
     for (int i = 0; i < ad_count; i++){
-        if(ads[i]->get_id() == id){
+        if(ads[i]->get_listing_id() == id){
             return ads[i];
         }
     }
@@ -405,7 +446,8 @@ void seller::Menu(){
         std::cout << "5. View my listings\n";
         std::cout << "6. Delete a listing\n";
         std::cout << "7. Edit a listing\n";
-        std::cout << "8. Sign out\n";
+        std::cout << "8. View inbox\n";
+        std::cout << "9. Sign out\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         switch (choice){
@@ -458,13 +500,16 @@ void seller::Menu(){
             l->edit_listing();
             break;}
         case 8:
+            view_inbox();
+            break;
+        case 9:
             std::cout << "Signing out...\n";
             return;
         default:
             std::cout << "Invalid input\n\n";
             break;
         }
-    } while (choice != 8);
+    } while (choice != 9);
 }
 
 #pragma endregion
@@ -557,7 +602,8 @@ void admin::Menu(){
         std::cout << "4. Ban a user\n";
         std::cout << "5. Un-Ban a user\n";
         std::cout << "6. Manage pending listings\n";
-        std::cout << "7. Sign out\n";
+        std::cout << "7. View inbox\n";
+        std::cout << "8. Sign out\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         switch (choice){
@@ -615,13 +661,16 @@ void admin::Menu(){
             }
             break;
         case 7:
+            view_inbox();
+            break;
+        case 8:
             std::cout << "Signing out...\n";
             return;
         default:
             std::cout << "Invalid input\n\n";
             break;
         }
-    } while (choice != 7);
+    } while (choice != 8);
 }
 
 #pragma endregion

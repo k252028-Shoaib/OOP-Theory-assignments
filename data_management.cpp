@@ -87,6 +87,10 @@ user* data_management::find_user_by_id(const int id){
 }
 
 bool data_management::create_message(user* sender, const int sender_id, const int reciever_id){
+    if(sender_id == reciever_id){
+        std::cout << "You cannot message yourself!\n";
+        return false;
+    }
     user* reciever = find_user_by_id(reciever_id);
     if(reciever == nullptr){
         std::cout << "No user found with id: " << reciever_id << "\n";
@@ -107,7 +111,7 @@ listing* data_management::create_listing(seller* s){
 
 listing* data_management::find_listing_by_id(const int id){
     for (size_t i = 0; i < listing_database.size(); i++){
-        if(listing_database[i]->get_id() == id){
+        if(listing_database[i]->get_listing_id() == id){
             return listing_database[i];
         }
     }
