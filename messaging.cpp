@@ -45,11 +45,9 @@ void message::edit_message(){
 
 void message::display_message(){
     std::cout << "User ID: " << sender_id << "\n";
-    std::cout << "Recieved ";
     display_time_elapsed();
-    std::cout << "ago" << "on: \n";
     date_sent.display_date();
-    if(!edited){
+    if(edited){
         std::cout << "Edited on: ";
         edit_date.display_date();
     }

@@ -82,7 +82,7 @@ void listing::display_vehicle_details(){
 }
 
 void listing::display_listing_details(){
-    std::cout << "---------------- Lisitng Summary ----------------";
+    std::cout << "---------------- Lisitng Details ----------------";
     std::cout << "\nLisitng ID: " << listing_id;
     std::cout << "\nPublish Date: ";
     publish_date.display_date();

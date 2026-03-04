@@ -302,7 +302,15 @@ std::string buyer::get_special_action_name() const{
 }
 
 void buyer::perform_special_action(listing *l){
+    for (size_t i = 0; i < favourites.size(); i++){
+        if(favourites[i] == l){
+            std::cout << "Listing is already in favourites.\n";
+            return;
+        }
+    }
+    //else
     favourites.push_back(l);
+    std::cout << "Listing id: " << l->get_listing_id() << " successfully added to favourites\n";
 }
 
 void buyer::buyer_special_action(listing *l){
