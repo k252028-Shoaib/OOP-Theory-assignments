@@ -80,7 +80,6 @@ class seller : public user{
         int get_seller_rating();
         std::string get_dealership_name();
         void displayProfile() const override;
-        void edit_listing();
         std::string get_special_action_name() const override;
         void perform_special_action(listing *l) override;
         void buyer_special_action(listing *l) override;
