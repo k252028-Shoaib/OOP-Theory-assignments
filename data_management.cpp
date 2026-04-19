@@ -4,6 +4,8 @@
 #include "messaging.h"
 #include "lisitngs.h"
 #include "vehicle.h"
+#include "CLI_Input.h"
+#include "Notification.h"
 #include <fstream>
 #include <algorithm>
 
@@ -101,6 +103,13 @@ bool data_management::create_message(user* sender, const int sender_id, const in
     sender->add_message_to_inbox(new_message, reciever_id);
     reciever->add_message_to_inbox(new_message, sender_id);
     message_database.push_back(new_message);
+
+    user* receiver = find_user_by_id(reciever_id);
+    if (receiver) {
+        // Create alert and push to receiver
+        Notification* n = new MessageNotification(reciever_id, new_message, sender->get_full_name());
+        receiver->add_notification(n);
+    }
     return true;
 }
 
@@ -138,4 +147,13 @@ void data_management::delete_listing(listing* l){
     
     std::erase(listing_database, l);
     delete l;
+}
+
+void data_management::trigger_price_alert(listing* l, float old_p, float new_p) {
+    for (user* u : user_database) {
+        buyer* b = dynamic_cast<buyer*>(u);
+        if (b && b->is_in_favourites(l)) {
+            b->add_notification(new PriceAlert(b->get_id(), l->get_name(), old_p, new_p));
+        }
+    }
 }

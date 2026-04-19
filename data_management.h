@@ -32,4 +32,6 @@ class data_management{
         listing* create_listing(seller* s);
         listing* find_listing_by_id(const int id);
         void delete_listing(listing* l);
+
+        void trigger_price_alert(listing* l, float old_p, float new_p);
 };  

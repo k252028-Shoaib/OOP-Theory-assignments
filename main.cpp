@@ -5,6 +5,7 @@
 #include "messaging.h"
 #include "vehicle.h"
 #include <iostream>
+#include "CLI_Input.h"
 
 int user::total_users = 0;
 int buyer::buyer_count = 0;//for assigning an id
@@ -15,8 +16,10 @@ bool user::db_set = false;
 int listing::total_listings = 0;
 std::vector<std::string> car::car_features_list;
 std::vector<std::string> bike::bike_features_list;
+Input_handler* input = nullptr;
 
 int main(){
+    input = new CLI_Input();
     data_management database;
     user* active_user = nullptr;
     user::set_database(&database);

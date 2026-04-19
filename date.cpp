@@ -20,7 +20,7 @@ date::date(int s,int m,int h,int d,int mon,int y){
     month = mon;
     year = y;
 }
-void date::display_date(){
+void date::display_date() const{
     std::cout << "Date: " << day << "/" << month << "/" << year << std::endl;
     std::cout << "Time: " << hour << ":" << minute << ":" << second << std::endl;
 }
@@ -57,4 +57,27 @@ time_t date::get_time_t() const {
 }
 time_t date::get_time_elapsed(time_t t){
     return time(0) - t;
+}
+
+
+// Reasoning: Allows clean output of dates using cout << date_obj;
+std::ostream& operator<<(std::ostream& os, const date& d) {
+    os << d.day << "/" << d.month << "/" << d.year << " " << d.hour << ":" << d.minute;
+    return os;
+}
+
+// Reasoning: Allows direct input of date components via cin >> date_obj;
+std::istream& operator>>(std::istream& is, date& d) {
+    is >> d.day >> d.month >> d.year;
+    return is;
+}
+
+// Reasoning: Necessary for sorting algorithms to show the latest listings first.
+bool date::operator<(const date& other) const {
+    return this->get_time_t() < other.get_time_t();
+}
+
+// Reasoning: Used to check if two events occurred on the same day.
+bool date::operator==(const date& other) const {
+    return (day == other.day && month == other.month && year == other.year);
 }

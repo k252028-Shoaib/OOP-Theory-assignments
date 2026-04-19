@@ -19,6 +19,10 @@ class message{
         void display_time_elapsed();
         int get_sender_id();
         int get_reciever_id();
+        
+        friend std::ostream& operator<<(std::ostream& os, const message& m);
+
+        friend class MessageNotification;
 };
 
 //create conversation class

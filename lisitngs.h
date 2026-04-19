@@ -29,5 +29,11 @@ class listing{
         void display_listing_details();
         void edit_listing();
         seller* get_seller_ptr() const;
+
+        bool operator==(const listing& other) const;
+        friend std::ostream& operator<<(std::ostream& os, const listing& l);
+
+        friend class ListingNotification;
+        friend class PriceAlert;
         ~listing();
 };

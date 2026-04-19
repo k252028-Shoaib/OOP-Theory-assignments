@@ -1,9 +1,11 @@
 #include <iostream>
 #include "accounts.h"
 #include "data_management.h"
+#include "CLI_Input.h"
 #include "messaging.h"
 #include "lisitngs.h"
 #include "vehicle.h"
+#include "Notification.h"
 
 //1. User methods:
 #pragma region user
@@ -282,6 +284,34 @@ void user::add_message_to_inbox(message* m, int user2_id){
     inbox.push_back({m});
 }
 
+void user::view_notifications_menu() {
+    if (notifications.empty()) {
+        std::cout << "No notifications.\n";
+        return;
+    }
+
+    std::cout << "\n--- Notifications Summary ---\n";
+    for (size_t i = 0; i < notifications.size(); i++) {
+        // Polymorphism: calls get_type() from derived classes
+        std::cout << i + 1 << ". [" << notifications[i]->get_type() << "] ";
+        if (!notifications[i]->get_is_read()) std::cout << "(NEW) ";
+        std::cout << "\n";
+    }
+
+    int choice = input->get_int("Enter notification number to view (0 to exit): ", 0, notifications.size());
+    if (choice == 0) return;
+
+    Notification* selected = notifications[choice - 1];
+    selected->display(); // Polymorphism: displays specific child details
+    selected->mark_as_read();
+
+    // Specific logic for MessageNotifications
+    if (selected->get_type() == "New Message") {
+        int chat_choice = input->get_int("1. Go to Inbox\n2. Back\nChoice: ", 1, 2);
+        if (chat_choice == 1) view_inbox();
+    }
+}
+
 #pragma endregion
 
 //2. Buyer methods:
@@ -324,6 +354,13 @@ void buyer::display_favourites(){
     }
 }
 
+bool buyer::is_in_favourites(listing* l) const {
+    for (listing* fav : favourites) {
+        if (*fav == *l) return true; // Uses listing::operator==
+    }
+    return false;
+}
+
 void buyer::display_search_history(){
     for (size_t i = 0; i < search_history.size(); i++){
         std::cout << "Listing Number: " << i << "\n";
@@ -342,7 +379,11 @@ void buyer::Menu(){
         std::cout << "4. View favorites list\n";
         std::cout << "5. View search history\n";
         std::cout << "6. View inbox\n";
-        std::cout << "7. Sign out\n";
+        int unread = 0;
+        for(auto n : notifications) if(!n->get_is_read()) unread++;
+        std::cout << "7. View Notifications (" << unread << " new)\n";
+        std::cout << "8. Sign out\n";
+
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         switch (choice){
@@ -368,13 +409,16 @@ void buyer::Menu(){
             view_inbox();
             break;
         case 7:
+            view_notifications_menu();
+            break;
+        case 8:
             std::cout << "Signing out...\n";
             return;
         default:
             std::cout << "Invalid input\n\n";
             break;
         }
-    } while (choice != 7);
+    } while (choice != 8);
 }
 
 void buyer::remove_listing_references(listing* l) {
@@ -462,7 +506,10 @@ void seller::Menu(){
         std::cout << "6. Delete a listing\n";
         std::cout << "7. Edit a listing\n";
         std::cout << "8. View inbox\n";
-        std::cout << "9. Sign out\n";
+        int unread = 0;
+        for(auto n : notifications) if(!n->get_is_read()) unread++;
+        std::cout << "9. View Notifications (" << unread << " new)\n";
+        std::cout << "10. Sign out\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         switch (choice){
@@ -515,13 +562,16 @@ void seller::Menu(){
             view_inbox();
             break;
         case 9:
+            view_notifications_menu();
+            break;
+        case 10:
             std::cout << "Signing out...\n";
             return;
         default:
             std::cout << "Invalid input\n\n";
             break;
         }
-    } while (choice != 9);
+    } while (choice != 10);
 }
 
 void seller::remove_listing_references(listing* l) {
@@ -595,6 +645,8 @@ void admin::manage_pending_listings(){
 
             if (action == 1) {
                 listing_database[i]->set_is_approved(true);
+                user* s = listing_database[i]->get_seller_ptr();
+                s->add_notification(new ListingNotification(s->get_id(), listing_database[i]->get_name(), "Approved"));
                 std::cout << "Listing approved!\n";
             } 
             else if (action == 2) {
@@ -621,7 +673,10 @@ void admin::Menu(){
         std::cout << "6. Manage pending listings\n";
         std::cout << "7. View inbox\n";
         std::cout << "8. Add a feature to the master list\n";
-        std::cout << "9. Sign out\n";
+        int unread = 0;
+        for(auto n : notifications) if(!n->get_is_read()) unread++;
+        std::cout << "9. View Notifications (" << unread << " new)\n";
+        std::cout << "10. Sign out\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         switch (choice){
@@ -699,13 +754,16 @@ void admin::Menu(){
                 std::cout << "Access denied.\n";}
             break;}
         case 9:
+            view_notifications_menu();
+            break;
+        case 10:
             std::cout << "Signing out...\n";
             return;
         default:
             std::cout << "Invalid input\n\n";
             break;
         }
-    } while (choice != 9);
+    } while (choice != 10);
 }
 
 #pragma endregion

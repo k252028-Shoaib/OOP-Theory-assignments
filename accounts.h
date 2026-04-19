@@ -7,6 +7,7 @@
 class listing;
 class message;
 class data_management;
+class Notification;
 
 class user{
     protected:
@@ -18,6 +19,7 @@ class user{
         static int total_users;
         bool is_banned;
         const int user_id;
+        std::vector<Notification*> notifications; 
         std::vector<std::vector<message*>> inbox;//2d array of conversations, each element points to a 1d array of messages (a conversation)
         
     public:
@@ -43,7 +45,13 @@ class user{
         virtual void buyer_special_action(listing *l) = 0;
         virtual void remove_listing_references(listing* l) = 0;
         virtual void Menu() = 0;
-        virtual ~user() = default;
+        void add_notification(Notification* n) { notifications.push_back(n); }
+        void view_notifications_menu();
+
+        bool operator==(const user& other) const { return this->user_id == other.user_id; }
+
+        friend class SecurityNotification;
+        virtual ~user() {for (auto n : notifications) delete n;};
 };
 
 //2.
@@ -64,6 +72,7 @@ class buyer : public user{
         void display_favourites();
         void display_search_history();
         void remove_listing_references(listing* l) override;
+        bool is_in_favourites(listing* l) const; 
         void Menu() override;
 };
 
@@ -87,6 +96,9 @@ class seller : public user{
         void view_my_ads();
         listing* find_listing_by_id(const int id);
         void remove_listing_references(listing* l) override;
+
+        seller& operator++(int) { this->seller_rating++; return *this; }
+
         void Menu() override;
 };
 

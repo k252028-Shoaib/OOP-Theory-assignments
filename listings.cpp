@@ -1,6 +1,9 @@
-#include "lisitngs.h"
 #include <iostream>
+#include "lisitngs.h"
 #include "vehicle.h"
+#include "accounts.h"
+#include "data_management.h"
+#include "CLI_Input.h"
 
 listing::listing(seller* s, vehicle *v) : listing_id(total_listings), edit_date(0,0,0,0,0,0), Seller(s), Veehicle(v){
     std::cout << "--------------------- Listing Details ---------------------\n";
@@ -116,6 +119,22 @@ void listing::edit_listing(){
         if(Veehicle->edit_details()) edited = true;
     }
 
+    float old_price = Veehicle->get_price();
+    
+    // Use the new input handler for validation
+    int choice = input->get_int("Edit price? (1 for yes, 0 for no): ", 0, 1);
+    
+    if (choice == 1) {
+        float new_price = input->get_float("Enter new price: ", 0.0f);
+        // Assume you add a set_price method to vehicle
+        Veehicle->set_price(new_price); 
+        
+        if (new_price < old_price) {
+            // Logic to notify followers
+            user::dbManager->trigger_price_alert(this, old_price, new_price);
+        }
+    }
+
     if(edited){
         edit_date.update_date();
         std::cout << "Listing successfully edited" << std::endl;
@@ -129,4 +148,16 @@ listing::~listing(){
 
 seller* listing::get_seller_ptr() const{
     return Seller;
+}
+
+
+// Reasoning: Used in data_management to find and remove specific listings from vectors.
+bool listing::operator==(const listing& other) const {
+    return this->listing_id == other.listing_id;
+}
+
+// Reasoning: Simplifies printing listing summaries in loops (cout << *listing_ptr).
+std::ostream& operator<<(std::ostream& os, const listing& l) {
+    os << "Listing [" << l.listing_id << "]: " << l.name << " | Price: " << l.Veehicle->get_price();
+    return os;
 }

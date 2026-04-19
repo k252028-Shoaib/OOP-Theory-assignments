@@ -1,5 +1,11 @@
 #include "messaging.h"
+#include "CLI_Input.h"
 #include <iostream>
+
+std::ostream& operator<<(std::ostream& os, const message& m) {
+    os << "From ID: " << m.sender_id << "\nContent: " << m.message_content;
+    return os;
+}
 
 message::message(const int sender_id, const int reciever_id): sender_id(sender_id), reciever_id(reciever_id), edit_date(0,0,0,0,0,0){
     std::cout << "--------------------- Message Details ---------------------\n";

@@ -1,5 +1,6 @@
 #include "vehicle.h"
 #include <iostream>
+#include "CLI_Input.h"
 #include <math.h>
 //1. Vehicle methods
 vehicle::vehicle(){
@@ -57,6 +58,10 @@ std::string vehicle::get_model_year(){
 
 float vehicle::get_price(){
     return price;
+}
+
+void vehicle::set_price(float p){
+    price = p;
 }
 
 int vehicle::get_mileage() { 
@@ -296,4 +301,11 @@ void bike::check_safety_gear_requirement() {
 
 void bike::admin_add_master_feature(std::string f){
     bike_features_list.push_back(f);
+}
+
+
+bool vehicle::operator==(const vehicle& other) const {
+    return (this->company == other.company && 
+            this->model_name == other.model_name && 
+            this->model_year == other.model_year);
 }

@@ -34,7 +34,11 @@ class vehicle{
         std::string get_model_name();
         std::string get_model_year();
         float get_price();
+        void set_price(float p);
         int get_mileage();
+
+        bool operator==(const vehicle& other) const;
+
         virtual ~vehicle() = default;
 };
 
