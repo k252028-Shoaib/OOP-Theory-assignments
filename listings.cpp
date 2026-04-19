@@ -76,7 +76,7 @@ void listing::display_listing_details(){
     std::cout << "\nLisitng ID: " << listing_id;
     std::cout << "\nPublish Date: ";
     publish_date.display_date();
-    if(!edited){
+    if(edited){
         std::cout << "Edited on: ";
         edit_date.display_date();
     }
@@ -93,10 +93,11 @@ void listing::edit_listing(){
         edited = true;
     }
 
-    std::cout << "Do you want to change the listing description? (1 for yes and 0 for no) : ";
+    std::cout << "Do you want to change the listing description? (1 for yes and 0 for no. NOTE: The prev. desciption will be deleted, proceed with caution) : ";
     std::cin >> choice;
     std::cin.ignore(10000, '\n');
     if(choice){
+        description = "";
         std::cout << "Enter the new description. Press enter 2 times when you want to stop: ";
         std::string currentLine;
         while (std::getline(std::cin, currentLine)) {
@@ -124,4 +125,8 @@ void listing::edit_listing(){
 
 listing::~listing(){
     delete Veehicle;
+}
+
+seller* listing::get_seller_ptr() const{
+    return Seller;
 }

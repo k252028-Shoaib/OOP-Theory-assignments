@@ -130,6 +130,12 @@ listing* data_management::find_listing_by_id(const int id){
 }
 
 void data_management::delete_listing(listing* l){
-    delete l;
+    if(l == nullptr) return;
+
+    for (user* u : user_database) {
+        u->remove_listing_references(l);
+    }
+    
     std::erase(listing_database, l);
+    delete l;
 }

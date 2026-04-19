@@ -142,16 +142,30 @@ void car::display_all_details(){
 }
 
 void car::add_car_features() {
-    int num;
-    std::cout << "How many car features do you want to add?: ";
-    std::cin >> num;
-    for (int i = 0; i < num; i++) {
-        std::string feature;
-        std::cout << "Enter feature " << i + 1 << ": ";
-        std::cin.ignore(); // To clear the buffer for strings
-        std::getline(std::cin, feature);
-        car_features.push_back(feature);
+    //check if the master list is empty
+    if (car_features_list.empty()) {
+        std::cout << "No features available in master list. Please contact admin.\n";
+        return;
     }
+    //else display the master feature list
+    for (size_t i = 0; i < car_features_list.size(); i++) {
+            std::cout << i + 1 << ". " << car_features_list[i] << "\n";
+    }
+    
+    int choice1, choice2;
+    do
+    {
+        std::cout << "Enter the feature number you want to choose: "; 
+        std::cin >> choice1;
+
+        if (choice1 > 0 && choice1 < car_features_list.size()){
+            car_features.push_back(car_features_list[choice1-1]);
+        }
+        else std::cout << "Invalid number\n";
+
+        std::cout << "Enter 1 if you want to add more features, else enter 0: ";
+        std::cin >> choice2;
+    } while (choice2 == 1);
 }
 
 bool car::edit_details() {
@@ -189,6 +203,10 @@ void car::calculate_road_tax() {
     std::cout << "The calculated Road Tax for this car is: " << tax << " PKR" << std::endl;
 }
 
+void car::admin_add_master_feature(std::string f){
+    car_features_list.push_back(f);
+}
+
 //3. Bike methods
 bike::bike() : vehicle() {
     std::cout << "Enter dry weight: ";
@@ -217,16 +235,30 @@ void bike::display_all_details(){
 }
 
 void bike::add_bike_features() {
-    int num;
-    std::cout << "How many bike features do you want to add?: ";
-    std::cin >> num;
-    for (int i = 0; i < num; i++) {
-        std::string feature;
-        std::cout << "Enter feature " << i + 1 << ": ";
-        std::cin.ignore();
-        std::getline(std::cin, feature);
-        bike_features.push_back(feature);
+    //check if the master list is empty
+    if (bike_features_list.empty()) {
+        std::cout << "No features available in master list. Please contact admin.\n";
+        return;
     }
+    //else display the master feature list
+    for (size_t i = 0; i < bike_features_list.size(); i++) {
+            std::cout << i + 1 << ". " << bike_features_list[i] << "\n";
+    }
+    
+    int choice1, choice2;
+    do
+    {
+        std::cout << "Enter the feature number you want to choose: "; 
+        std::cin >> choice1;
+
+        if (choice1 > 0 && choice1 < bike_features_list.size()){
+            bike_features.push_back(bike_features_list[choice1-1]);
+        }
+        else std::cout << "Invalid number\n";
+
+        std::cout << "Enter 1 if you want to add more features, else enter 0: ";
+        std::cin >> choice2;
+    } while (choice2 == 1);
 }
 
 bool bike::edit_details() {
@@ -260,4 +292,8 @@ void bike::check_safety_gear_requirement() {
     } else {
         std::cout << "Standard bike: Standard helmet and gloves required.\n";
     }
+}
+
+void bike::admin_add_master_feature(std::string f){
+    bike_features_list.push_back(f);
 }

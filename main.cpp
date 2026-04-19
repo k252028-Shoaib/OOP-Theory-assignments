@@ -13,8 +13,8 @@ int admin::admin_count = 0;//for assigning an id
 data_management* user::dbManager = nullptr;
 bool user::db_set = false;
 int listing::total_listings = 0;
-std::vector<std::string> car::car_features;
-std::vector<std::string> bike::bike_features;
+std::vector<std::string> car::car_features_list;
+std::vector<std::string> bike::bike_features_list;
 
 int main(){
     data_management database;
@@ -47,7 +47,7 @@ int main(){
 
         //if program reaches here means user has successfully sign up/in. Next is the user menu
         active_user->Menu();
-        //when user exits this he is signing out. so make active_user = to null
+        //when user exits this, he is signing out. so make active_user = null
         active_user = nullptr;
     } while (choice != 3);
     

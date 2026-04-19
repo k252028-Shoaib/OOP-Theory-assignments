@@ -229,7 +229,7 @@ void user::listing_menu(){
                 std::cout << "Invalid input\n";
                 break;
         }
-    } while (choice != 3);
+    } while (choice != 4);
 }
 
 void user::send_message(user* active_user,int sender_id, int reciver_id){
@@ -376,6 +376,13 @@ void buyer::Menu(){
         }
     } while (choice != 7);
 }
+
+void buyer::remove_listing_references(listing* l) {
+    // Remove pointer if it exists in these vectors
+    std::erase(favourites, l);
+    std::erase(search_history, l);
+}
+
 #pragma endregion
 
 
@@ -407,7 +414,7 @@ void seller::displayProfile() const{
     if (dealership_name != "private seller") std::cout << "\nDealership name: " << dealership_name;
     else std::cout << "\nDealership name: ''\n";
     std::cout << "My listings: \n";
-    for (int i = 0; i < ad_count; i++){
+    for (int i = 0; i < ads.size(); i++){
         ads[i]->display_summary();
     }
 }
@@ -427,14 +434,14 @@ void seller::perform_special_action(listing *l){
 void seller::buyer_special_action(listing *l){/*do nothing*/}
 
 void seller::view_my_ads(){
-    if(ad_count == 0) std::cout << "No ads yet\n";
-    for (int i = 0; i < ad_count; i++){
+    if(ads.size() == 0) std::cout << "No ads yet\n";
+    for (int i = 0; i < ads.size(); i++){
         ads[i]->display_summary();
     }
 }
 
 listing* seller::find_listing_by_id(const int id){
-    for (int i = 0; i < ad_count; i++){
+    for (int i = 0; i < ads.size(); i++){
         if(ads[i]->get_listing_id() == id){
             return ads[i];
         }
@@ -473,7 +480,6 @@ void seller::Menu(){
             break;
         case 4:
             ads.push_back(dbManager->create_listing(this));
-            ad_count++;
             break;
         case 5:
             view_my_ads();
@@ -490,8 +496,6 @@ void seller::Menu(){
                     break;
             }
             dbManager->delete_listing(l);
-            std::erase(ads,l);
-            ad_count--;
             std::cout << "Listing successfully deleted\n";
             break;}
         case 7:{
@@ -518,6 +522,11 @@ void seller::Menu(){
             break;
         }
     } while (choice != 9);
+}
+
+void seller::remove_listing_references(listing* l) {
+    // If the listing was in this seller's ads, remove it
+    std::erase(ads, l);
 }
 
 #pragma endregion
@@ -576,7 +585,7 @@ void admin::manage_pending_listings(){
     std::vector<listing*>& listing_database = dbManager->get_listing_db();
     
     std::cout << "\n------------------ Pending Approvals ------------------\n";
-    for (size_t i = 0; i < listing_database.size(); i++) {
+    for (int i = 0; i < (int)listing_database.size(); i++) {
         if (!listing_database[i]->get_is_approved()) {
             listing_database[i]->display_summary();
             
@@ -611,7 +620,8 @@ void admin::Menu(){
         std::cout << "5. Un-Ban a user\n";
         std::cout << "6. Manage pending listings\n";
         std::cout << "7. View inbox\n";
-        std::cout << "8. Sign out\n";
+        std::cout << "8. Add a feature to the master list\n";
+        std::cout << "9. Sign out\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
         switch (choice){
@@ -671,14 +681,31 @@ void admin::Menu(){
         case 7:
             view_inbox();
             break;
-        case 8:
+        case 8:{ // New option for admin
+            if (admin_level >= 1) {
+                int type;
+                std::string new_feat;
+                std::cout << "Add feature to 1. Car List or 2. Bike List? ";
+                std::cin >> type;
+                std::cout << "Enter feature name: ";
+                std::cin.ignore();
+                std::getline(std::cin, new_feat);
+
+                if (type == 1) car::admin_add_master_feature(new_feat);
+                else bike::admin_add_master_feature(new_feat);
+
+                std::cout << "Feature added to master database.\n";
+            } else {
+                std::cout << "Access denied.\n";}
+            break;}
+        case 9:
             std::cout << "Signing out...\n";
             return;
         default:
             std::cout << "Invalid input\n\n";
             break;
         }
-    } while (choice != 8);
+    } while (choice != 9);
 }
 
 #pragma endregion

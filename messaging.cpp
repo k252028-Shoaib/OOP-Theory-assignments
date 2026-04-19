@@ -28,6 +28,7 @@ void message::edit_message(){
     int choice;
     std::cin >> choice;
     if (choice){
+        message_content = "";
         std::cout << "Enter your new message. Press enter 2 times when you stop: \n";
         std::string currentLine;
 
@@ -40,6 +41,7 @@ void message::edit_message(){
         }
         std::cout << "Message sucessfully edited\n";
         edit_date.update_date();
+        edited = true;
     }
 }
 

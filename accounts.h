@@ -41,6 +41,7 @@ class user{
         virtual std::string get_special_action_name() const = 0;
         virtual void perform_special_action(listing *l) = 0;
         virtual void buyer_special_action(listing *l) = 0;
+        virtual void remove_listing_references(listing* l) = 0;
         virtual void Menu() = 0;
         virtual ~user() = default;
 };
@@ -62,6 +63,7 @@ class buyer : public user{
         void buyer_special_action(listing *l) override;
         void display_favourites();
         void display_search_history();
+        void remove_listing_references(listing* l) override;
         void Menu() override;
 };
 
@@ -72,7 +74,6 @@ class seller : public user{
         int seller_rating = 0;
         std::string dealership_name;//If they are a dealer, otherwise it will be set to ""
         std::vector<listing*> ads;
-        int ad_count = 0;
         static int seller_count;
     public:
         seller();
@@ -85,6 +86,7 @@ class seller : public user{
         void buyer_special_action(listing *l) override;
         void view_my_ads();
         listing* find_listing_by_id(const int id);
+        void remove_listing_references(listing* l) override;
         void Menu() override;
 };
 
@@ -103,6 +105,7 @@ class admin : public user{
         void perform_special_action(listing *l) override;
         void buyer_special_action(listing *l) override;
         void manage_pending_listings();
+        void remove_listing_references(listing* l) override {} // Admins don't store listing pointers
         void Menu() override;
 };
 

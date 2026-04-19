@@ -45,13 +45,15 @@ class car : public vehicle{
         double ground_clearance;
         std::string drive_train;
         int no_of_doors;
-        static std::vector<std::string> car_features;
+        std::vector<std::string> car_features;
+        static std::vector<std::string> car_features_list;//this is a list of features made and managed by the admin, user can add features from this list
     public:
         car();
         void display_all_details() override;
         bool edit_details() override;
-        static void add_car_features();
+        void add_car_features();
         void calculate_road_tax();
+        static void admin_add_master_feature(std::string f);
 };
 
 class bike : public vehicle{
@@ -60,12 +62,14 @@ class bike : public vehicle{
         double seat_height;
         std::string drive_type;//4 stroke, 2 stroke etc.
         std::string cooling_system;//air cooled, water cooled etc.
-        static std::vector<std::string> bike_features;
+        std::vector<std::string> bike_features;
+        static std::vector<std::string> bike_features_list;//this is a list of features made and managed by the admin, user can add features from this list
     public:
         bike();
         void display_all_details() override;
         bool edit_details() override;
-        static void add_bike_features();
+        void add_bike_features();
         void check_safety_gear_requirement();
+        static void admin_add_master_feature(std::string f);
 };
 

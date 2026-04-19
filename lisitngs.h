@@ -28,5 +28,6 @@ class listing{
         void display_vehicle_details();
         void display_listing_details();
         void edit_listing();
+        seller* get_seller_ptr() const;
         ~listing();
 };
