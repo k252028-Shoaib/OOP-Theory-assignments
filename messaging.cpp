@@ -9,42 +9,16 @@ std::ostream& operator<<(std::ostream& os, const message& m) {
 
 message::message(const int sender_id, const int reciever_id): sender_id(sender_id), reciever_id(reciever_id), edit_date(0,0,0,0,0,0){
     std::cout << "--------------------- Message Details ---------------------\n";
-    message_content = "";
-    std::cin.ignore(1000,'\n');
-    input_message();
+    message_content = input->get_paragraphs("Enter your message.");
     edited = false;
     is_read = false;
 }
 
-void message::input_message(){
-    std::cout << "Enter your message. Press enter 2 times when you want to stop: \n";
-    std::string currentLine;
-
-    while (std::getline(std::cin, currentLine)) {
-        if (currentLine.empty()) {
-            break;
-        }
-        
-        message_content += currentLine + "\n"; 
-    }
-}   
-
 void message::edit_message(){
-    std::cout << "Please note the previous message content will be deleted. If you wish to continue, enter 1, else enter 0: ";
     int choice;
-    std::cin >> choice;
+    choice = input->get_int("Please note the previous message content will be deleted. If you wish to continue, enter 1, else enter 0: ", 0,1);
     if (choice){
-        message_content = "";
-        std::cout << "Enter your new message. Press enter 2 times when you stop: \n";
-        std::string currentLine;
-
-        while (std::getline(std::cin, currentLine)) {
-            if (currentLine.empty()) {
-                break;
-            }
-
-            message_content += currentLine + "\n"; 
-        }
+        message_content = input->get_paragraphs("Enter your new message.");
         std::cout << "Message sucessfully edited\n";
         edit_date.update_date();
         edited = true;

@@ -1,45 +1,31 @@
 #include "vehicle.h"
 #include <iostream>
-#include "CLI_Input.h"
-#include <math.h>
+#include "CLI_input.h" // Ensure this includes Input_handler.h
+#include <cmath>
+
+extern Input_handler* input; // Global pointer declaration
+
 //1. Vehicle methods
 vehicle::vehicle(){
     std::cout << "--------------------- Vehicle Details ---------------------\n";
-    std::cout << "Enter engine diplacement: ";
-    std::cin >> engine.engine_displacement;
-    std::cout << "Enter hp: ";
-    std::cin >> engine.hp;
-    std::cout << "Enter tourque: ";
-    std::cin >> engine.torque;
-    std::cout << "Enter number of cylinders: ";
-    std::cin >> engine.cylinders;
-    std::cout << "Enter fuel type (pertrol, hybrid, EV)";
-    std::cin >> engine.fuel_type;
-    std::cout << "Enter vehicle body colour: ";
-    std::cin >> colour;
-    std::cout << "Enter the price: ";
-    std::cin >> price;
-    std::cout << "Enter company name: ";
-    std::cin >> company;
-    std::cout << "Enter model name: ";
-    std::cin >> model_name;
-    std::cout << "Enter model year: ";
-    std::cin >> model_year;
-    std::cout << "Enter mileage (in km): ";
-    std::cin >> mileage;
-    std::cout << "Enter average (in km/l): ";
-    std::cin >> average;
-    std::cout << "Enter top speed: ";
-    std::cin >> top_speed;
-    std::cout << "Enter 0- 60:";
-    std::cin >> zero_to_60;
-    std::cout << "Enter fuel tank capacity (in l): ";
-    std::cin >> fuel_tank_capacity;
-    std::cout << "Enter transmission type: ";
-    std::cin >> trasmission_type;
-    std::cout << "Is the vehicle used? (Enter 1 for yes and 0 for no): ";
-    int u;
-    std::cin >> u;
+    engine.engine_displacement = input->get_int("Enter engine displacement: ", 1);
+    engine.hp = input->get_int("Enter hp: ", 1);
+    engine.torque = input->get_int("Enter torque: ", 1);
+    engine.cylinders = input->get_int("Enter number of cylinders: ", 1);
+    engine.fuel_type = input->get_word("Enter fuel type (petrol, hybrid, EV): ");
+    colour = input->get_word("Enter vehicle body colour: ");
+    price = input->get_float("Enter the price: ", 0.0f);
+    company = input->get_line("Enter company name: ");
+    model_name = input->get_line("Enter model name: ");
+    model_year = input->get_word("Enter model year: ");
+    mileage = input->get_int("Enter mileage (in km): ", 0);
+    average = input->get_float("Enter average (in km/l): ", 0.0f);
+    top_speed = input->get_int("Enter top speed: ", 0);
+    zero_to_60 = input->get_float("Enter 0-60 time (in seconds): ", 0.0f);
+    fuel_tank_capacity = input->get_float("Enter fuel tank capacity (in litres): ", 0.0f);
+    trasmission_type = input->get_word("Enter transmission type: ");
+    
+    int u = input->get_int("Is the vehicle used? (Enter 1 for yes and 0 for no): ", 0, 1);
     if(u) used = true;
     else used = false;
 }
@@ -78,35 +64,29 @@ void vehicle::display_all_details(){
     std::cout << "\nFuel tank capacity: " << fuel_tank_capacity;
     if(used){
         std::cout << "\nUsed: Yes";
-        std::cout << "Mileage: " << mileage;
+        std::cout << "\nMileage: " << mileage;
     }
     else std::cout << "\nUsed: No\n";
 }
 
 void vehicle::calculate_resale_value(){
-    float resale_value;
-    int years;
-    std::cout << "Enter the number of years you want to sell after: ";
-    std::cin >> years;
-    resale_value = price * pow(1-0.1, years);
-    std::cout << "Resale Value after " << years << " will be " << resale_value << std::endl; 
+    int years = input->get_int("Enter the number of years you want to sell after: ", 0);
+    float resale_value = price * pow(1-0.1, years);
+    std::cout << "Resale Value after " << years << " years will be " << resale_value << std::endl; 
 }
 
 void vehicle::calculate_finance(){
-    float down_payment, monthly_interest_rate, no_months;
-    std::cout << "Enter down payment: $";
-    std::cin >> down_payment;
-    std::cout << "Enter monthly interest rate (e.g., 5.5 for 5.5%): ";
-    std::cin >> monthly_interest_rate;
-    std::cout << "Enter loan term (number of months): ";
-    std::cin >> no_months;
+    float down_payment = input->get_float("Enter down payment: $", 0.0f, price);
+    float monthly_interest_rate = input->get_float("Enter monthly interest rate (e.g., 5.5 for 5.5%): ", 0.0f);
+    float no_months = input->get_float("Enter loan term (number of months): ", 1.0f);
+    
     float principal = price - down_payment;
 
     float numerator = monthly_interest_rate * pow(1 + monthly_interest_rate, no_months);
     float denominator = pow(1 + monthly_interest_rate, no_months) - 1;
     float monthly_payment = principal * (numerator / denominator);
 
-    // 4. Output results
+    // Output results
     float total_cost = (monthly_payment * no_months) + down_payment;
     float total_interest = total_cost - price;
 
@@ -117,94 +97,74 @@ void vehicle::calculate_finance(){
 
 //2. Car methods
 car::car() : vehicle() {
-    std::cout << "Enter number of seats: ";
-    std::cin >> no_of_seats;
-    std::cout << "Enter trunk space: ";
-    std::cin >> trunk_space;
-    std::cout << "Enter ground clearance: ";
-    std::cin >> ground_clearance;
-    std::cout << "Enter drive train (AWD, FWD, RWD): ";
-    std::cin >> drive_train;
-    std::cout << "Enter number of doors: ";
-    std::cin >> no_of_doors;
+    no_of_seats = input->get_int("Enter number of seats: ", 1);
+    trunk_space = input->get_double("Enter trunk space: ", 0.0);
+    ground_clearance = input->get_double("Enter ground clearance: ", 0.0);
+    drive_train = input->get_word("Enter drive train (AWD, FWD, RWD): ");
+    no_of_doors = input->get_int("Enter number of doors: ", 1);
     add_car_features();
 }
 
 void car::display_all_details(){
     std::cout << "\nVehicle Type: Car";
     vehicle::display_all_details();
-    std::cout << "No of doors: " << no_of_doors;
+    std::cout << "\nNo of doors: " << no_of_doors;
     std::cout << "\nNo of seats: " << no_of_seats;
     std::cout << "\nTrunk space: " << trunk_space;
     std::cout << "\nGround Clearance: " << ground_clearance;
-    std::cout << "\nDrive trian: " << drive_train;
+    std::cout << "\nDrive train: " << drive_train;
     std::cout << "\nCar Features: ";
     for (size_t i = 0; i < car_features.size(); i++){
-        std::cout << "\n" << i+1;
-        std::cout << "\n" << car_features[i];
+        std::cout << "\n" << i+1 << ". " << car_features[i];
     }
     std::cout << std::endl;
 }
 
 void car::add_car_features() {
-    //check if the master list is empty
     if (car_features_list.empty()) {
         std::cout << "No features available in master list. Please contact admin.\n";
         return;
     }
-    //else display the master feature list
+    
     for (size_t i = 0; i < car_features_list.size(); i++) {
-            std::cout << i + 1 << ". " << car_features_list[i] << "\n";
+        std::cout << i + 1 << ". " << car_features_list[i] << "\n";
     }
     
     int choice1, choice2;
     do
     {
-        std::cout << "Enter the feature number you want to choose: "; 
-        std::cin >> choice1;
+        choice1 = input->get_int("Enter the feature number you want to choose: ", 1, car_features_list.size());
+        car_features.push_back(car_features_list[choice1-1]);
 
-        if (choice1 > 0 && choice1 < car_features_list.size()){
-            car_features.push_back(car_features_list[choice1-1]);
-        }
-        else std::cout << "Invalid number\n";
-
-        std::cout << "Enter 1 if you want to add more features, else enter 0: ";
-        std::cin >> choice2;
+        choice2 = input->get_int("Enter 1 if you want to add more features, else enter 0: ", 0, 1);
     } while (choice2 == 1);
 }
 
 bool car::edit_details() {
-    int choice;
     std::cout << "\n--- Edit Car Details ---";
     std::cout << "\n1. Edit Number of Seats";
     std::cout << "\n2. Edit Trunk Space";
     std::cout << "\n3. Edit Ground Clearance";
     std::cout << "\n4. Edit Price";
-    std::cout << "\nEnter choice: ";
-    std::cin >> choice;
+    
+    int choice = input->get_int("\nEnter choice: ", 1, 4);
 
     if (choice == 1) {
-        std::cout << "Enter new number of seats: ";
-        std::cin >> no_of_seats;
+        no_of_seats = input->get_int("Enter new number of seats: ", 1);
     } else if (choice == 2) {
-        std::cout << "Enter new trunk space: ";
-        std::cin >> trunk_space;
+        trunk_space = input->get_double("Enter new trunk space: ", 0.0);
     } else if (choice == 3) {
-        std::cout << "Enter new ground clearance: ";
-        std::cin >> ground_clearance;
+        ground_clearance = input->get_double("Enter new ground clearance: ", 0.0);
     } else if (choice == 4) {
-        std::cout << "Enter new price: ";
-        std::cin >> price;
+        price = input->get_float("Enter new price: ", 0.0f);
     } else {
-        std::cout << "Invalid choice.";
         return false;
     }
     return true;
 }
 
 void car::calculate_road_tax() {
-    float tax;
-    tax = price * 0.02;
+    float tax = price * 0.02;
     std::cout << "The calculated Road Tax for this car is: " << tax << " PKR" << std::endl;
 }
 
@@ -214,78 +174,62 @@ void car::admin_add_master_feature(std::string f){
 
 //3. Bike methods
 bike::bike() : vehicle() {
-    std::cout << "Enter dry weight: ";
-    std::cin >> dry_weight;
-    std::cout << "Enter seat height: ";
-    std::cin >> seat_height;
-    std::cout << "Enter drive type (e.g. Chain, Belt, Shaft): ";
-    std::cin >> drive_type;
-    std::cout << "Enter cooling system: ";
-    std::cin >> cooling_system;
+    dry_weight = input->get_int("Enter dry weight: ", 1);
+    seat_height = input->get_double("Enter seat height: ", 0.0);
+    drive_type = input->get_line("Enter drive type (e.g. Chain, Belt, Shaft): ");
+    cooling_system = input->get_line("Enter cooling system: ");
     add_bike_features();
 }
 
 void bike::display_all_details(){
     std::cout << "\nVehicle Type: Bike";
     vehicle::display_all_details();
-    std::cout << "Dryweight: " << dry_weight;
-    std::cout << "\nSeat Hieght: " << seat_height;
-    std::cout << "\nDrrive Type: " << drive_type;
+    std::cout << "\nDry weight: " << dry_weight;
+    std::cout << "\nSeat Height: " << seat_height;
+    std::cout << "\nDrive Type: " << drive_type;
     std::cout << "\nCooling system: " << cooling_system;
+    std::cout << "\nBike Features: ";
     for (size_t i = 0; i < bike_features.size(); i++){
-        std::cout << "\n" << i+1;
-        std::cout << "\n" << bike_features[i];
+        std::cout << "\n" << i+1 << ". " << bike_features[i];
     }
     std::cout << std::endl;
 }
 
 void bike::add_bike_features() {
-    //check if the master list is empty
     if (bike_features_list.empty()) {
         std::cout << "No features available in master list. Please contact admin.\n";
         return;
     }
-    //else display the master feature list
+    
     for (size_t i = 0; i < bike_features_list.size(); i++) {
-            std::cout << i + 1 << ". " << bike_features_list[i] << "\n";
+        std::cout << i + 1 << ". " << bike_features_list[i] << "\n";
     }
     
     int choice1, choice2;
     do
     {
-        std::cout << "Enter the feature number you want to choose: "; 
-        std::cin >> choice1;
+        choice1 = input->get_int("Enter the feature number you want to choose: ", 1, bike_features_list.size());
+        bike_features.push_back(bike_features_list[choice1-1]);
 
-        if (choice1 > 0 && choice1 < bike_features_list.size()){
-            bike_features.push_back(bike_features_list[choice1-1]);
-        }
-        else std::cout << "Invalid number\n";
-
-        std::cout << "Enter 1 if you want to add more features, else enter 0: ";
-        std::cin >> choice2;
+        choice2 = input->get_int("Enter 1 if you want to add more features, else enter 0: ", 0, 1);
     } while (choice2 == 1);
 }
 
 bool bike::edit_details() {
-    int choice;
     std::cout << "\n--- Edit Bike Details ---";
     std::cout << "\n1. Edit Dry Weight";
     std::cout << "\n2. Edit Seat Height";
     std::cout << "\n3. Edit Price";
-    std::cout << "\nEnter choice: ";
-    std::cin >> choice;
+    
+    int choice = input->get_int("\nEnter choice: ", 1, 3);
 
     if (choice == 1) {
-        std::cout << "Enter new dry weight: ";
-        std::cin >> dry_weight;
+        dry_weight = input->get_int("Enter new dry weight: ", 1);
     } else if (choice == 2) {
-        std::cout << "Enter new seat height: ";
-        std::cin >> seat_height;
+        seat_height = input->get_double("Enter new seat height: ", 0.0);
     } else if (choice == 3) {
-        std::cout << "Enter new price: ";
-        std::cin >> price;
+        price = input->get_float("Enter new price: ", 0.0f);
     } else {
-        std::cout << "Invalid choice.";
         return false;
     }
     return true;
@@ -302,7 +246,6 @@ void bike::check_safety_gear_requirement() {
 void bike::admin_add_master_feature(std::string f){
     bike_features_list.push_back(f);
 }
-
 
 bool vehicle::operator==(const vehicle& other) const {
     return (this->company == other.company && 

@@ -8,18 +8,9 @@
 listing::listing(seller* s, vehicle *v) : listing_id(total_listings), edit_date(0,0,0,0,0,0), Seller(s), Veehicle(v){
     std::cout << "--------------------- Listing Details ---------------------\n";
     total_listings++;
-    std::cout << "Please enter listing name: ";
-    std::cin.ignore(1000, '\n');
-    std::getline(std::cin, name);
-    std::cout << "Please enter listing description. Press enter 2 times when you want to stop: ";
+    name = input->get_line("Please enter listing name: ");
+    description = input->get_paragraphs("Please enter listing description. ");
 
-    std::string currentLine;
-    while (std::getline(std::cin, currentLine)) {
-        if (currentLine.empty()) {
-            break;
-        }
-        description += currentLine + "\n"; 
-    } 
     is_approved = false;
 }
 
@@ -87,41 +78,25 @@ void listing::display_listing_details(){
 
 void listing::edit_listing(){
     int choice;
-    std::cout << "Do you want to change the listing name? (1 for yes and 0 for no) : ";
-    std::cin >> choice;
-    std::cin.ignore(10000, '\n');
+    choice = input->get_int("Do you want to change the listing name? (1 for yes and 0 for no) : ", 0, 1);
     if(choice){
-        std::cout << "Enter the new name: ";
-        std::getline(std::cin, name);
+        name = input->get_line("Enter the new name: ");
+        edited = true;
+    }
+    
+    choice = input->get_int("Do you want to change the listing description? (1 for yes and 0 for no. NOTE: The prev. desciption will be deleted, proceed with caution) : ", 0, 1);
+    if(choice){
+        description = input->get_paragraphs("Enter the new description.");
         edited = true;
     }
 
-    std::cout << "Do you want to change the listing description? (1 for yes and 0 for no. NOTE: The prev. desciption will be deleted, proceed with caution) : ";
-    std::cin >> choice;
-    std::cin.ignore(10000, '\n');
-    if(choice){
-        description = "";
-        std::cout << "Enter the new description. Press enter 2 times when you want to stop: ";
-        std::string currentLine;
-        while (std::getline(std::cin, currentLine)) {
-            if (currentLine.empty()) {
-                break;
-            }
-            description += currentLine + "\n"; 
-        }
-        edited = true;
-    }
-
-    std::cout << "Do you want to change the Veehicle details? (1 for yes and 0 for no) : ";
-    std::cin >> choice;
-    std::cin.ignore(10000, '\n');
+    choice = input->get_int("Do you want to change the Veehicle details? (1 for yes and 0 for no) : ", 0, 1);
     if(choice){
         if(Veehicle->edit_details()) edited = true;
     }
 
     float old_price = Veehicle->get_price();
     
-    // Use the new input handler for validation
     int choice = input->get_int("Edit price? (1 for yes, 0 for no): ", 0, 1);
     
     if (choice == 1) {

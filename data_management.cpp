@@ -21,8 +21,7 @@ std::vector<message*>& data_management::get_message_db(const int id1, const int 
 
 user* data_management::sign_up(){
     int choice;
-    std::cout << "Enter 1 if you are a buyer, 2 if you are a seller, 3 if you are an admin. ";
-    std::cin >> choice;
+    choice = input->get_int("Enter 1 if you are a buyer, 2 if you are a seller, 3 if you are an admin. ", 1,3);
     user* new_user;
     switch (choice){
     case 1:
@@ -54,10 +53,8 @@ bool data_management::verify_email(std::string email){
 
 user* data_management::sign_in(){
     std::string email, password;
-    std::cout << "Enter your email: ";
-    std::cin >> email;
-    std::cout << "Enter your password: ";
-    std::cin >> password;
+    email = input->get_email("Enter your email: ");
+    password = input->get_password("Enter your password: ");
     user* u1 = verify_user(email,password);
     if(u1 == nullptr){
         return nullptr;
@@ -116,12 +113,7 @@ bool data_management::create_message(user* sender, const int sender_id, const in
 listing* data_management::create_listing(seller* s){
     int choice;
     vehicle* v;
-    std::cout << "Do you want to add a car or a bike, enter 1 for car and 2 for bike: ";
-    std::cin >> choice;
-    while(choice != 1 && choice != 2){
-        std::cout << "Invalid input. Enter 1 for car and 2 for bike: ";
-        std::cin >> choice;
-    }
+    choice = input->get_int("Do you want to add a car or a bike, enter 1 for car and 2 for bike: ", 1,2);
     if (choice == 1) v = new car();
     else v = new bike();
     listing* l = new listing(s,v);

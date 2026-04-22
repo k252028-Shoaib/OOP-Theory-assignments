@@ -27,8 +27,7 @@ int main(){
     do
     {
         std::cout << "================================== Welcome To Cyber Market! ==================================\n";
-        std::cout << "1. Sign up\n2. Sign in\n3. Exit\nEnter choice number: ";
-        std::cin >> choice;
+        choice = input->get_int("1. Sign up\n2. Sign in\n3. Exit\nEnter choice number: ", 1,3);
         if (choice == 1){
             active_user = user::dbManager->sign_up();
         }

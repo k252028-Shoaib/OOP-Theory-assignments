@@ -11,22 +11,14 @@
 #pragma region user
 user::user():user_id(total_users){ // sign up 
     std::cout << "--------------------- User Details ---------------------\n";
-    std::cout << "Please enter your email: ";
-    std::cin >> email;
+    email = input->get_email("Please enter your email: ");
     while(!dbManager->verify_email(email)){
-        std::cout << "That email is already registered! Please enter a different email: ";
-        std::cin >> email;
+        email = input->get_email("That email is already registered! Please enter a different email: ");
     }
-    std::cout << "please enter your phone number: ";
-    std::cin >> phone_number;
-    std::cout << "Please enter your full name: ";
-    std::cin.ignore(10000, '\n');
-    std::getline(std::cin, full_name);
-    std::cout << "Please enter your password: ";
-    std::cin >> password;
-    std::cout << "Please enter your location: ";
-    std::cin.ignore(10000, '\n');
-    std::getline(std::cin, location);
+    phone_number = input->get_word("Please enter your phone number: ");
+    full_name = input->get_line("Please enter your full name: ");
+    password = input->get_password("Please enter your password: ");
+    location = input->get_line("Please enter your location: ");
     total_users++;
     is_banned = false;
 }
@@ -82,8 +74,7 @@ void user::filter_listings() {
     std::cout << "3. By Max Price\n";
     std::cout << "4. By Model Year\n";
     std::cout << "5. By Max Mileage\n";
-    std::cout << "Enter the option number: ";
-    std::cin >> filter_choice;
+    filter_choice = input->get_int("Enter the option number: ", 1, 5);
 
     std::string string_query;
     float float_query;
@@ -93,24 +84,19 @@ void user::filter_listings() {
     // Gather the search query based on what they chose
     switch (filter_choice) {
         case 1:
-            std::cout << "Enter Brand/Company name: ";
-            std::cin >> string_query;
+            string_query = input->get_line("Enter Brand/Company name: ");
             break;
         case 2:
-            std::cout << "Enter Model name: ";
-            std::cin >> string_query;
+            string_query = input->get_line("Enter Model name: ");
             break;
         case 3:
-            std::cout << "Enter Maximum Price (PKR): ";
-            std::cin >> float_query;
+            float_query = input->get_float("Enter Maximum Price (PKR): ", 0);
             break;
         case 4:
-            std::cout << "Enter Model Year: ";
-            std::cin >> string_query;
+            string_query = input->get_word("Enter Model Year: ");
             break;
         case 5:
-            std::cout << "Enter Maximum Mileage (km): ";
-            std::cin >> int_query;
+            int_query = input->get_int("Enter Maximum Mileage (km): ", 0, 2000000);
             break;
         default:
             std::cout << "Invalid filter option.\n";
@@ -160,8 +146,7 @@ void user::listing_menu(){
     {
         std::cout << "================================== Listings Menu ==================================\n";
         std::cout << "1. Re-diplay All Listings \n2. View a listing's details \n3. Filter listings \n4. Exit to Main Menu\n";
-        std::cout << "Enter the option number: ";
-        std::cin >> choice;
+        choice = input->get_int("Enter the option number: ", 1, 4);
         switch(choice){
             case 1://outside a listing 
                 std::cout << "---------------------------- All listings ----------------------------\n";
@@ -172,8 +157,7 @@ void user::listing_menu(){
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 break;
             case 2:{//in a listing:
-                std::cout << "Enter listing id: ";
-                std::cin >> ls_id;
+                ls_id = input->get_int("Enter listing id: ");
                 listing* l = dbManager->find_listing_by_id(ls_id);
                 if(l == nullptr) {
                     std::cout << "Listing id not found\n";
@@ -190,19 +174,15 @@ void user::listing_menu(){
                     std::cout << "------------------ Lisitng ID: " <<  ls_id <<  " ------------------\n";
                     std::cout << "1. Vehicle Details \n2. Seller Details \n3. Listing details \n4. ";
                     std::cout << get_special_action_name() << "\n5. Exit to listings Menu\n";
-                    std::cout << "Enter the option number: ";
-                    std::cin >> choice2;
+                    choice2 = input->get_int("Enter the option number: ", 1, 5);
                     switch (choice2){
                         case 1:
                             l->display_vehicle_details();
                             break;
                         case 2:{
                             int seller_id = l->display_seller_details();
-                            std::cout << "Do you want to contact the seller? (Enter 1 for yes or 0 for no) : ";
-                            std::cin >> choice3;
-                            if(choice3){
-                                send_message(this, user_id, seller_id);
-                            }
+                            choice3 = input->get_int("Do you want to contact the seller? (Enter 1 for yes or 0 for no) : ", 0, 1);
+                            if(choice3) {send_message(this, user_id, seller_id);}
                             break;
                         }
                         case 3:
@@ -259,16 +239,14 @@ void user::view_inbox() {
     }
 
     int chat_choice;
-    std::cout << "Enter conversation number to view (or 0 to exit): ";
-    std::cin >> chat_choice;
-
-    if (chat_choice > 0 && chat_choice <= (int)inbox.size()) {
-        size_t idx = chat_choice - 1;//index
-        std::cout << "\n--- Full Conversation ---\n";
-        for (message* m : inbox[idx]) {//go through all messages
-            m->display_message(); 
-            std::cout << "--------------------------\n";
-        }
+    chat_choice = input->get_int("Enter conversation number to view (or 0 to exit): ", 0, inbox.size());
+    if (chat_choice == 0) return;
+    
+    size_t idx = chat_choice - 1;//index
+    std::cout << "\n--- Full Conversation ---\n";
+    for (message* m : inbox[idx]) {//go through all messages
+        m->display_message(); 
+        std::cout << "--------------------------\n";
     }
 }
 
@@ -384,16 +362,14 @@ void buyer::Menu(){
         std::cout << "7. View Notifications (" << unread << " new)\n";
         std::cout << "8. Sign out\n";
 
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        choice = input->get_int("Enter the option number: ", 1, 8);
         switch (choice){
         case 1:
             user::listing_menu();
             break;
         case 2:{
             int reciever_id;
-            std::cout << "Enter reciever id: ";
-            std::cin >> reciever_id;
+            reciever_id = input->get_int("Enter reciever id: ", 0);
             send_message(this, user_id, reciever_id);
             break;}
         case 3:
@@ -434,8 +410,7 @@ void buyer::remove_listing_references(listing* l) {
 #pragma region seller
 seller::seller() : seller_id(seller_count){
     seller_count++;
-    std::cout << "Enter your dealership name (enter 'private seller' if you are not a dealership): ";
-    std::getline(std::cin, dealership_name);
+    dealership_name = input->get_line("Enter your dealership name (enter 'private seller' if you are not a dealership): ");
 }
 
 int seller::get_seller_id(){
@@ -510,16 +485,16 @@ void seller::Menu(){
         for(auto n : notifications) if(!n->get_is_read()) unread++;
         std::cout << "9. View Notifications (" << unread << " new)\n";
         std::cout << "10. Sign out\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+
+        choice = input->get_int("Enter the option number: ", 1, 10);
+
         switch (choice){
         case 1:
             user::listing_menu();
             break;
         case 2:{
             int reciever_id;
-            std::cout << "Enter reciever id: ";
-            std::cin >> reciever_id;
+            reciever_id = input->get_int("Enter reciever id: ", 0);
             send_message(this, user_id, reciever_id);
             break;}
         case 3:
@@ -534,8 +509,8 @@ void seller::Menu(){
         case 6:{
             int ls_id;
             view_my_ads();
-            std::cout << "Enter listing id to delete: ";
-            std::cin >> ls_id;
+            ls_id = input->get_int("Enter listing id to delete: ", 0);
+
             listing* l = find_listing_by_id(ls_id);
             if(l == nullptr) {
                     std::cout << "Invalid listing id\n";
@@ -548,8 +523,9 @@ void seller::Menu(){
         case 7:{
             int ls_id;
             view_my_ads();
-            std::cout << "Enter listing id to edit: ";
-            std::cin >> ls_id;
+            
+            ls_id = input->get_int("Enter listing id to edit: ", 0);
+
             listing* l = find_listing_by_id(ls_id);
             if(l == nullptr) {
                     std::cout << "Invalid listing id\n";
@@ -586,25 +562,7 @@ void seller::remove_listing_references(listing* l) {
 #pragma region admin
 admin::admin() : admin_id(admin_count){
     admin_count++;
-    std::cout << "Enter 1 if you are a level 1 admin and enter 2 if you are a level 2 admin: ";
-    
-    while (true) {
-        if (std::cin >> admin_level) {
-            if (admin_level == 1 || admin_level == 2) {
-                break; // Valid input, exit the loop
-            } 
-            else {
-                std::cout << "Invalid input. Enter 1 if you are a level 1 admin and enter 2 if you are a level 2 admin: ";
-            }
-        }
-        else {
-            std::cout << "Invalid input type. Please enter a number (1 or 2): ";
-            
-            std::cin.clear(); 
-            
-            std::cin.ignore(1000, '\n'); 
-        }
-    }
+    admin_level = input->get_int("Enter 1 if you are a level 1 admin and enter 2 if you are a level 2 admin: ", 1,2);
 }
 
 
@@ -640,8 +598,7 @@ void admin::manage_pending_listings(){
             listing_database[i]->display_summary();
             
             int action;
-            std::cout << "1. Approve \n2. Remove\n";
-            std::cin >> action;
+            action = input->get_int("1. Approve \n2. Remove\n", 1,2);
 
             if (action == 1) {
                 listing_database[i]->set_is_approved(true);
@@ -677,16 +634,16 @@ void admin::Menu(){
         for(auto n : notifications) if(!n->get_is_read()) unread++;
         std::cout << "9. View Notifications (" << unread << " new)\n";
         std::cout << "10. Sign out\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        
+        choice = input->get_int("Enter the option number: ", 1, 10);
+
         switch (choice){
         case 1:
             user::listing_menu();
             break;
         case 2:{
             int reciever_id;
-            std::cout << "Enter reciever id: ";
-            std::cin >> reciever_id;
+            reciever_id = input->get_int("Enter reciever id: ", 0);
             send_message(this, user_id, reciever_id);
             break;}
         case 3:
@@ -694,8 +651,7 @@ void admin::Menu(){
             break;
         case 4:{
             int id;
-            std::cout << "Enter user's id: ";
-            std::cin >> id;
+            id = input->get_int("Enter user's id: ", 0);
             if(id == user_id){
                 std::cout << "YOU CANNOT BAN YOURSELF!!!\n";
                 break;
@@ -710,8 +666,7 @@ void admin::Menu(){
             break;}
         case 5:{
             int id;
-            std::cout << "Enter user's id: ";
-            std::cin >> id;
+            id = input->get_int("Enter user's id: ", 0);
             if(id == user_id){
                 std::cout << "You are already un-banned:)\n";
                 break;
@@ -736,15 +691,13 @@ void admin::Menu(){
         case 7:
             view_inbox();
             break;
-        case 8:{ // New option for admin
+        case 8:{ 
             if (admin_level >= 1) {
                 int type;
                 std::string new_feat;
-                std::cout << "Add feature to 1. Car List or 2. Bike List? ";
-                std::cin >> type;
-                std::cout << "Enter feature name: ";
-                std::cin.ignore();
-                std::getline(std::cin, new_feat);
+                type = input->get_int( "Add feature to 1. Car List or 2. Bike List? ", 1,2);
+
+                new_feat = input->get_line("Enter feature name: ");
 
                 if (type == 1) car::admin_add_master_feature(new_feat);
                 else bike::admin_add_master_feature(new_feat);

@@ -30,7 +30,7 @@ float CLI_Input::get_float(std::string prompt, float min, float max) {
         if (std::cin >> value) {
             clear_buffer();
             if (value >= min && value <= max) return value;
-            std::cout << "Error: Value out of range.\n";
+            std::cout << "Error: Value out of range (" << min << " to " << max << ").\n";
         } else {
             std::cout << "Error: Invalid decimal format.\n";
             std::cin.clear();
@@ -46,7 +46,7 @@ double CLI_Input::get_double(std::string prompt, double min, double max) {
         if (std::cin >> value) {
             clear_buffer();
             if (value >= min && value <= max) return value;
-            std::cout << "Error: Value out of range.\n";
+            std::cout << "Error: Value out of range (" << min << " to " << max << ").\n";
         } else {
             std::cout << "Error: Invalid number format.\n";
             std::cin.clear();

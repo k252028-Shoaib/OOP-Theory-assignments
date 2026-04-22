@@ -21,3 +21,5 @@ class CLI_Input : public Input_handler{
         char get_char(std::string prompt, std::string valid_chars = "") override;
     
 };
+
+Input_handler* input = new CLI_Input();
