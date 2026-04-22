@@ -1,5 +1,6 @@
 #pragma once
 #include <ctime>
+#include <iostream>
 class date{ 
     private:
         int second;

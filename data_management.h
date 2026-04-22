@@ -27,6 +27,7 @@ class data_management{
         user* verify_user(std::string email, std::string password);
 
         user* find_user_by_id(const int id);
+        user* find_user_by_email(const std::string email);
         bool create_message(user* sender, const int sender_id, const int reciever_id);
         
         listing* create_listing(seller* s);

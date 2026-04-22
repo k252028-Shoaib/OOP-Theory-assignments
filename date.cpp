@@ -1,5 +1,4 @@
 #include "date.h"
-#include <iostream>
 
 date::date(){
     time_t now = time(0); // get current time

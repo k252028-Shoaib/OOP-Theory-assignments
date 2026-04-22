@@ -86,6 +86,15 @@ user* data_management::find_user_by_id(const int id){
     return nullptr;
 }
 
+user* data_management::find_user_by_email(const std::string email) {
+    for (size_t i = 0; i < user_database.size(); i++) {
+        if (user_database[i]->get_email() == email) {
+            return user_database[i];
+        }
+    }
+    return nullptr;
+}
+
 bool data_management::create_message(user* sender, const int sender_id, const int reciever_id){
     if(sender_id == reciever_id){
         std::cout << "You cannot message yourself!\n";

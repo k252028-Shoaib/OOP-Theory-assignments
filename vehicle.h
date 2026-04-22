@@ -27,6 +27,7 @@ class vehicle{
     public:
         vehicle();
         void calculate_resale_value();
+        void calculate_resale_value(int custom_years);
         void calculate_finance();
         virtual void display_all_details();
         virtual bool edit_details() = 0;

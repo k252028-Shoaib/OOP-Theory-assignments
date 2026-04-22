@@ -1,4 +1,3 @@
-#pragma once
 #include "CLI_Input.h"
 #include <iostream>
 
@@ -6,7 +5,7 @@ void CLI_Input::clear_buffer(){
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-int CLI_Input::get_int(std::string prompt, int min = std::numeric_limits<int>::lowest(), int max = std::numeric_limits<int>::max()){
+int CLI_Input::get_int(std::string prompt, int min, int max){
     int value;
     while (true) {
         std::cout << prompt;

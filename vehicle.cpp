@@ -1,9 +1,7 @@
 #include "vehicle.h"
 #include <iostream>
-#include "CLI_input.h" // Ensure this includes Input_handler.h
+#include "CLI_Input.h" 
 #include <cmath>
-
-extern Input_handler* input; // Global pointer declaration
 
 //1. Vehicle methods
 vehicle::vehicle(){
@@ -73,6 +71,11 @@ void vehicle::calculate_resale_value(){
     int years = input->get_int("Enter the number of years you want to sell after: ", 0);
     float resale_value = price * pow(1-0.1, years);
     std::cout << "Resale Value after " << years << " years will be " << resale_value << std::endl; 
+}
+
+void vehicle::calculate_resale_value(int custom_years) {
+    float resale_value = price * pow(1 - 0.1, custom_years);
+    std::cout << "Resale Value after " << custom_years << " years will be " << resale_value << " PKR" << std::endl; 
 }
 
 void vehicle::calculate_finance(){

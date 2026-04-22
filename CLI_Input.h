@@ -22,4 +22,4 @@ class CLI_Input : public Input_handler{
     
 };
 
-Input_handler* input = new CLI_Input();
+extern Input_handler* input;

@@ -23,6 +23,10 @@ user::user():user_id(total_users){ // sign up
     is_banned = false;
 }
 
+user::~user() {
+    for (auto n : notifications) delete n;
+}
+
 void user::set_database(data_management *db){
     if (!db_set) {
         dbManager = db;

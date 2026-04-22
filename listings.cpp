@@ -97,11 +97,10 @@ void listing::edit_listing(){
 
     float old_price = Veehicle->get_price();
     
-    int choice = input->get_int("Edit price? (1 for yes, 0 for no): ", 0, 1);
+    choice = input->get_int("Edit price? (1 for yes, 0 for no): ", 0, 1);
     
     if (choice == 1) {
         float new_price = input->get_float("Enter new price: ", 0.0f);
-        // Assume you add a set_price method to vehicle
         Veehicle->set_price(new_price); 
         
         if (new_price < old_price) {

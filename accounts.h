@@ -51,7 +51,7 @@ class user{
         bool operator==(const user& other) const { return this->user_id == other.user_id; }
 
         friend class SecurityNotification;
-        virtual ~user() {for (auto n : notifications) delete n;};
+        virtual ~user();
 };
 
 //2.
